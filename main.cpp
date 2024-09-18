@@ -1,11 +1,12 @@
-#include "config.h"
-#include <iostream>
+#include "server/webserver.h"
+
 
 int main(int argc, char *argv[])
 {
-	std::string user = "puji";
-	std::string passwd = "1";
+	std::string user = "root";
+	std::string password = "1";
 	std::string databasename = "yourdb";
-	config server_config;
-	server_config.parse_arg(argc, argv);
+	int PORT = 8888;
+	Webserver webserver(PORT, user, password, databasename, true);
+	webserver.start();
 }
