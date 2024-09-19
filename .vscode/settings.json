@@ -108,6 +108,27 @@
     "typeinfo": "cpp",
     "variant": "cpp",
     "format": "cpp",
-    "text_encoding": "cpp"
+    "text_encoding": "cpp",
+    "cstring": "cpp",
+    "chrono": "cpp",
+    "condition_variable": "cpp",
+    "ratio": "cpp",
+    "future": "cpp",
+    "iomanip": "cpp",
+    "mutex": "cpp",
+    "semaphore": "cpp",
+    "sstream": "cpp",
+    "stop_token": "cpp",
+    "syncstream": "cpp",
+    "thread": "cpp",
+    "csignal": "cpp",
+    "any": "cpp",
+    "bitset": "cpp",
+    "codecvt": "cpp",
+    "complex": "cpp",
+    "list": "cpp",
+    "map": "cpp",
+    "set": "cpp",
+    "typeindex": "cpp"
   }
 }

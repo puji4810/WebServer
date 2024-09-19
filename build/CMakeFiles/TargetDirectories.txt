@@ -1,0 +1,3 @@
+/home/puji/WebServer/build/CMakeFiles/server.dir
+/home/puji/WebServer/build/CMakeFiles/edit_cache.dir
+/home/puji/WebServer/build/CMakeFiles/rebuild_cache.dir

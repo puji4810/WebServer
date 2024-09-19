@@ -13,6 +13,9 @@
 #include <sys/epoll.h>
 #include <string.h>
 #include <iostream>
+#include <memory>
+#include "epoller.h"
+#include "thread_pool.hpp"
 
 struct Webserver{
 	Webserver(int port, std::string user,std::string password,std::string databasename,
@@ -28,13 +31,19 @@ private:
 	std::string password;
 	std::string databasename;
 	struct sockaddr_in serv_addr;
-	void initsocket();
+	std::unique_ptr<Epoller> epoller;
+	std::unique_ptr<ThreadPool> threadpool;
+	//std::unordered_map<int, HttpConn> users;
+	//std::unordered_map<int, sockaddr_in> users;
+	int client_fd;
+	bool initsocket();
 	void eventListen();
 	void eventLoop();
-	void acceptConn();
-	void closeConn(int fd);
-	void addClient(int fd, sockaddr_in addr);
+	//void acceptConn();
+	//void closeConn(int fd);
+	//void addClient(int fd, sockaddr_in addr);
 	void handleRequest(int fd);
+	int setnonblocking(int fd);
 
 };
 
