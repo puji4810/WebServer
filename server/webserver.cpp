@@ -60,21 +60,40 @@ int Webserver::setnonblocking(int fd){
 	return old_option;
 }
 
-void Webserver::eventLoop(){
-	while(1){
-		int ret = epoller->wait();
-		if(ret<0){
-			std::cerr<<"epoller wait error"<<std::endl;
+void Webserver::eventLoop()
+{
+	while (1)
+	{
+		int ret = epoller->wait(); // 等待事件发生
+		if (ret < 0)
+		{
+			std::cerr << "epoller wait error" << std::endl;
 			break;
 		}
-		for(int i=0; i<ret; i++){
+		for (int i = 0; i < ret; i++)
+		{
 			int fd = epoller->events[i].data.fd;
-			if(fd==listen_fd){
+			uint32_t events = epoller->events[i].events; // 获取事件类型
+
+			if (fd == listen_fd)
+			{
+				// 监听到新的客户端连接，处理 accept
 				struct sockaddr_in addr;
 				socklen_t len = sizeof(addr);
 				int conn_fd = accept(listen_fd, (struct sockaddr *)&addr, &len);
-				handleRequest(conn_fd);
-			}else{
+				if (conn_fd > 0)
+				{
+					// 提交新连接的处理到线程池
+					threadpool->submit(&Webserver::handleRequest, this, conn_fd);
+				}
+				else
+				{
+					std::cerr << "accept error" << std::endl;
+				}
+			}
+			else if (events & EPOLLIN)
+			{
+				// 如果是可读事件，提交请求处理到线程池
 				threadpool->submit(&Webserver::handleRequest, this, fd);
 			}
 		}

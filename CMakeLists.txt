@@ -11,11 +11,10 @@ set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 
 # 指定源文件
-set(SOURCES
-    main.cpp
-    server/epoller.cpp
-    server/webserver.cpp
-	server/thread_pool.hpp
+file(GLOB SOURCES
+    "main.cpp"
+    "server/*.cpp"
+    "server/*.hpp"
 )
 
 # 可执行文件生成路径
