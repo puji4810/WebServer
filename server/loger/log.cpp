@@ -1,6 +1,20 @@
 #include "log.h"
 
 bool Log::init(const std::string &filePath, LogLevel level, size_t maxQueueSize){
+	std::filesystem::path logDir = std::filesystem::path(filePath).parent_path();
+	// 检查目录是否存在，不存在则创建
+	if (!std::filesystem::exists(logDir))
+	{
+		std::filesystem::create_directories(logDir);
+	}
+	std::ofstream logFile(filePath, std::ios::out | std::ios::app);
+	if (!logFile.is_open())
+	{
+		std::cerr << "Failed to open log file: " << filePath << std::endl;
+		return false;
+	}
+	logFile.close(); // 文件可以正常打开，关闭，后续异步写入
+
 	stopLogging = false;
 	this->level = level;
 	this->filePath = filePath;
@@ -19,22 +33,24 @@ void Log::stop(){
 }
 
 void Log::log(LogLevel level, std::string msg){
-	if(level >= this->level){
+	if (level >= this->level)
+	{
 		logQueue->push(formatLog(level, msg));
 	}
 }
 
-void Log::asyncWriteLog(){
-	std::ofstream logFile(filePath, std::ios::app | std::ios::out);
-	if(!logFile){
-		std::cerr << "open log file error" << std::endl;
+void Log::asyncWriteLog()
+{
+	std::ofstream logFile(filePath, std::ios::out | std::ios::app);
+	if (!logFile.is_open())
+	{
+		std::cerr << "Failed to open log file: " << filePath << std::endl;
 		return;
 	}
-	while(!stopLogging || !logQueue->empty()){
-		std::string msg = logQueue->pop();
-		if(!msg.empty()){
-			logFile << msg << std::endl;
-		}
+	while (!stopLogging)
+	{
+		std::string log = logQueue->pop();
+		logFile << log << std::endl;
 	}
 	logFile.close();
 }
@@ -42,7 +58,6 @@ void Log::asyncWriteLog(){
 std::string Log::formatLog(LogLevel level, const std::string &msg){
 	std::stringstream ss;
 	ss << '[' << getTime() << ']' << '[' << getLevel(level) << ']' << msg;
-	ss << msg;
 	return ss.str();
 }
 
@@ -56,18 +71,19 @@ std::string Log::getTime(){
 }
 
 std::string Log::getLevel(LogLevel level){
-	switch(level){
-		case DEBUG:
-			return "DEBUG";
-		case INFO:
-			return "INFO";
-		case WARN:
-			return "WARN";
-		case ERROR:
-			return "ERROR";
-		case FATAL:
-			return "FATAL";
-		default:
-			return "UNKNOWN";
+	switch (level)
+	{
+	case DEBUG:
+		return "DEBUG";
+	case INFO:
+		return "INFO";
+	case WARN:
+		return "WARN";
+	case ERROR:
+		return "ERROR";
+	case FATAL:
+		return "FATAL";
+	default:
+		return "UNKNOWN";
 	}
 }

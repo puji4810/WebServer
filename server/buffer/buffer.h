@@ -26,7 +26,7 @@ public:
 	const char *peek() const { return begin() + readIndex_; }
 
 	// 读取 len 个字节的数据，并更新读指针
-	void retrieve(size_t len){}
+	void retrieve(size_t len);
 
 	// 清空缓冲区
 	void retrieveAll()
@@ -36,22 +36,22 @@ public:
 	}
 
 	// 返回缓冲区中的所有数据，并清空缓冲区
-	std::string retrieveAllAsString(){}
+	std::string retrieveAllAsString();
 
 	// 添加数据到缓冲区
-	void append(const char *data, size_t len){}
+	void append(const char *data, size_t len);
 
 	// 添加 std::string 到缓冲区
-	void append(const std::string &str){}
+	void append(const std::string &str);
 
 	// 确保缓冲区有足够的可写空间
-	void ensureWritableBytes(size_t len){}
+	void ensureWritableBytes(size_t len);
 
 	// 从套接字中读取数据到缓冲区
-	ssize_t readFd(int fd, int *savedErrno){}
+	ssize_t readFd(int fd, int *savedErrno);
 
 	// 将缓冲区中的数据写入套接字
-	ssize_t writeFd(int fd, int *savedErrno){}
+	ssize_t writeFd(int fd, int *savedErrno);
 
 private:
 	// 返回缓冲区的起始地址
@@ -63,11 +63,11 @@ private:
 	const char *beginWrite() const { return begin() + writeIndex_; }
 
 	// 更新写指针
-	void hasWritten(size_t len) {}
+	void hasWritten(size_t len) { writeIndex_ += len; }
 
 	// 扩展缓冲区
-	void makeSpace(size_t len){}
-	
+	void makeSpace(size_t len);
+
 private:
 	std::vector<char> buffer_; // 存储数据的缓冲区
 	size_t readIndex_;		   // 可读数据的起始位置

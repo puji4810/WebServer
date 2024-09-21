@@ -1,6 +1,18 @@
 #include "webserver.h"
-#define check_ret(ret, msg) if(ret<0){std::cerr<<msg<<std::endl;exit(1);}
-#define check_ret0(ret, msg) if(ret==0){std::cerr<<msg<<std::endl;exit(1);}//特别检查0的情况
+#define check_ret(ret, msg)            \
+	if (ret < 0)                       \
+	{                                  \
+		std::cerr << msg << std::endl; \
+		LOG_ERROR(msg);                   \
+		exit(1);                       \
+	}
+#define check_ret0(ret, msg)           \
+	if (ret == 0)                      \
+	{                                  \
+		std::cerr << msg << std::endl; \
+		LOG_ERROR(msg);                \
+		exit(1);                       \
+	} // 特别检查0的情况
 
 Webserver::Webserver(int port, std::string user, std::string password, std::string databasename, bool opt_mode):
 	port(port), user(user), password(password), databasename(databasename), opt_mode(opt_mode)
@@ -8,7 +20,15 @@ Webserver::Webserver(int port, std::string user, std::string password, std::stri
 	epoller = std::make_unique<Epoller>();
 	threadpool = std::make_unique<ThreadPool>();
 	threadpool->start();
-	initsocket();
+	Log::getInstance().init("./log/webserver.log", LogLevel::DEBUG, 1024);
+	if(!initsocket()){
+		LOG_ERROR("==========initsocket error==========");
+		exit(1);
+	}
+	LOG_INFO("==========initsocket success==========");
+	LOG_INFO("==========webserver start=============");
+	LOG_INFO("Port is %d ", port);
+	LOG_INFO("please visit 127.0.0.1:%d", port);
 }
 
 Webserver::~Webserver(){
@@ -41,7 +61,7 @@ bool Webserver::initsocket(){
 	check_ret(ret, "setsockopt error");
 
 	ret = bind(listen_fd, (struct sockaddr *)&addr, sizeof(addr));
-	check_ret(ret, "bind error");
+	check_ret(ret, "bind error,请检查端口是否被占用");
 
 	ret = listen(listen_fd, 10);
 	check_ret(ret, "listen error");
@@ -68,6 +88,7 @@ void Webserver::eventLoop()
 		if (ret < 0)
 		{
 			std::cerr << "epoller wait error" << std::endl;
+			LOG_ERROR("epoller wait error");
 			break;
 		}
 		for (int i = 0; i < ret; i++)
@@ -89,6 +110,7 @@ void Webserver::eventLoop()
 				else
 				{
 					std::cerr << "accept error" << std::endl;
+					LOG_ERROR("accept error");
 				}
 			}
 			else if (events & EPOLLIN)

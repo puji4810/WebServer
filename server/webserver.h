@@ -16,6 +16,7 @@
 #include <memory>
 #include "epoller.h"
 #include "thread_pool.hpp"
+#include "./loger/log.h"
 
 struct Webserver{
 	Webserver(int port, std::string user,std::string password,std::string databasename,
@@ -44,7 +45,7 @@ private:
 	//void addClient(int fd, sockaddr_in addr);
 	void handleRequest(int fd);
 	int setnonblocking(int fd);
-
+	Log& log = Log::getInstance();
 };
 
 #endif

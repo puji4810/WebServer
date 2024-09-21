@@ -1,8 +1,12 @@
 file(REMOVE_RECURSE
   "CMakeFiles/server.dir/main.cpp.o"
   "CMakeFiles/server.dir/main.cpp.o.d"
+  "CMakeFiles/server.dir/server/buffer/buffer.cpp.o"
+  "CMakeFiles/server.dir/server/buffer/buffer.cpp.o.d"
   "CMakeFiles/server.dir/server/epoller.cpp.o"
   "CMakeFiles/server.dir/server/epoller.cpp.o.d"
+  "CMakeFiles/server.dir/server/loger/log.cpp.o"
+  "CMakeFiles/server.dir/server/loger/log.cpp.o.d"
   "CMakeFiles/server.dir/server/webserver.cpp.o"
   "CMakeFiles/server.dir/server/webserver.cpp.o.d"
   "bin/server"

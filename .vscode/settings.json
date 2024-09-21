@@ -129,6 +129,9 @@
     "list": "cpp",
     "map": "cpp",
     "set": "cpp",
-    "typeindex": "cpp"
+    "typeindex": "cpp",
+    "buffer": "cpp",
+    "netfwd": "cpp",
+    "fstream": "cpp"
   }
 }

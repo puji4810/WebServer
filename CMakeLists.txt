@@ -15,6 +15,10 @@ file(GLOB SOURCES
     "main.cpp"
     "server/*.cpp"
     "server/*.hpp"
+    "server/buffer/buffer.cpp"
+    #"server/buffer/buffer.hpp"
+    "server/loger/log.cpp"
+    #"server/loger/log.hpp"
 )
 
 # 可执行文件生成路径

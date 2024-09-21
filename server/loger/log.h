@@ -15,6 +15,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <filesystem>
 
 enum LogLevel
 {
@@ -46,6 +47,7 @@ public:
 	std::string formatLog(LogLevel level, const std::string &msg);
 	std::string getTime();
 	std::string getLevel(LogLevel level);
+	LogLevel getCurLevel() const { return level; }
 
 private:
 	std::string filePath;
@@ -53,22 +55,24 @@ private:
 	std::atomic<bool> stopLogging;
 	std::unique_ptr<BlockQueue<std::string>> logQueue;
 	std::thread logthread;
-
+	//Buffer buffer;
 };
 
-#define LOG_BASE(level, format, ...) \
-	do                               \
-	{                                \
-		Log log = Log::getInstance();\
-		if(!log.running() && log.getLevel() <= level){\
-			log.writeLog(level, format, ##__VA_ARGS__);\
-		}\
-	}while(0)
+#define LOG_BASE(level, format, ...)                     \
+	do                                                   \
+	{                                                    \
+		Log &log = Log::getInstance();                   \
+		if (log.running() && log.getCurLevel() <= level) \
+		{                                                \
+			char buf[1024];                              \
+			snprintf(buf, 1024, format, ##__VA_ARGS__);  \
+			log.log(level, buf);                         \
+		}                                                \
+	} while (0)
 
 #define LOG_DEBUG(format, ...) LOG_BASE(DEBUG, format, ##__VA_ARGS__)
 #define LOG_INFO(format, ...) LOG_BASE(INFO, format, ##__VA_ARGS__)
 #define LOG_WARN(format, ...) LOG_BASE(WARN, format, ##__VA_ARGS__)
 #define LOG_ERROR(format, ...) LOG_BASE(ERROR, format, ##__VA_ARGS__)
-#define LOG_FATAL(format, ...) LOG_BASE(FATAL, format, ##__VA_ARGS__)
 
 #endif

@@ -9,7 +9,9 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/puji/WebServer/main.cpp" "CMakeFiles/server.dir/main.cpp.o" "gcc" "CMakeFiles/server.dir/main.cpp.o.d"
+  "/home/puji/WebServer/server/buffer/buffer.cpp" "CMakeFiles/server.dir/server/buffer/buffer.cpp.o" "gcc" "CMakeFiles/server.dir/server/buffer/buffer.cpp.o.d"
   "/home/puji/WebServer/server/epoller.cpp" "CMakeFiles/server.dir/server/epoller.cpp.o" "gcc" "CMakeFiles/server.dir/server/epoller.cpp.o.d"
+  "/home/puji/WebServer/server/loger/log.cpp" "CMakeFiles/server.dir/server/loger/log.cpp.o" "gcc" "CMakeFiles/server.dir/server/loger/log.cpp.o.d"
   "/home/puji/WebServer/server/webserver.cpp" "CMakeFiles/server.dir/server/webserver.cpp.o" "gcc" "CMakeFiles/server.dir/server/webserver.cpp.o.d"
   )
 

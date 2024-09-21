@@ -1,1 +1,1 @@
-/usr/bin/c++ -g CMakeFiles/server.dir/main.cpp.o CMakeFiles/server.dir/server/epoller.cpp.o CMakeFiles/server.dir/server/webserver.cpp.o -o bin/server  -lpthread -lmysqlclient 
+/usr/bin/c++ -g CMakeFiles/server.dir/main.cpp.o CMakeFiles/server.dir/server/buffer/buffer.cpp.o CMakeFiles/server.dir/server/epoller.cpp.o CMakeFiles/server.dir/server/loger/log.cpp.o CMakeFiles/server.dir/server/webserver.cpp.o -o bin/server  -lpthread -lmysqlclient 

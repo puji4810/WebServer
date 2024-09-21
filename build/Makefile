@@ -153,6 +153,30 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+server/buffer/buffer.o: server/buffer/buffer.cpp.o
+.PHONY : server/buffer/buffer.o
+
+# target to build an object file
+server/buffer/buffer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/buffer/buffer.cpp.o
+.PHONY : server/buffer/buffer.cpp.o
+
+server/buffer/buffer.i: server/buffer/buffer.cpp.i
+.PHONY : server/buffer/buffer.i
+
+# target to preprocess a source file
+server/buffer/buffer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/buffer/buffer.cpp.i
+.PHONY : server/buffer/buffer.cpp.i
+
+server/buffer/buffer.s: server/buffer/buffer.cpp.s
+.PHONY : server/buffer/buffer.s
+
+# target to generate assembly for a file
+server/buffer/buffer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/buffer/buffer.cpp.s
+.PHONY : server/buffer/buffer.cpp.s
+
 server/epoller.o: server/epoller.cpp.o
 .PHONY : server/epoller.o
 
@@ -176,6 +200,30 @@ server/epoller.s: server/epoller.cpp.s
 server/epoller.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/epoller.cpp.s
 .PHONY : server/epoller.cpp.s
+
+server/loger/log.o: server/loger/log.cpp.o
+.PHONY : server/loger/log.o
+
+# target to build an object file
+server/loger/log.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/loger/log.cpp.o
+.PHONY : server/loger/log.cpp.o
+
+server/loger/log.i: server/loger/log.cpp.i
+.PHONY : server/loger/log.i
+
+# target to preprocess a source file
+server/loger/log.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/loger/log.cpp.i
+.PHONY : server/loger/log.cpp.i
+
+server/loger/log.s: server/loger/log.cpp.s
+.PHONY : server/loger/log.s
+
+# target to generate assembly for a file
+server/loger/log.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/loger/log.cpp.s
+.PHONY : server/loger/log.cpp.s
 
 server/webserver.o: server/webserver.cpp.o
 .PHONY : server/webserver.o
@@ -213,9 +261,15 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... server/buffer/buffer.o"
+	@echo "... server/buffer/buffer.i"
+	@echo "... server/buffer/buffer.s"
 	@echo "... server/epoller.o"
 	@echo "... server/epoller.i"
 	@echo "... server/epoller.s"
+	@echo "... server/loger/log.o"
+	@echo "... server/loger/log.i"
+	@echo "... server/loger/log.s"
 	@echo "... server/webserver.o"
 	@echo "... server/webserver.i"
 	@echo "... server/webserver.s"
