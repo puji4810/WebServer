@@ -17,10 +17,10 @@
 #include "epoller.h"
 #include "thread_pool.hpp"
 #include "./loger/log.h"
+#include "./timer/time_heap.hpp"
 
 struct Webserver{
-	Webserver(int port, std::string user,std::string password,std::string databasename,
-		bool opt_mode);
+	Webserver(int port, std::string user,std::string password,std::string databasename,bool opt_mode);
 	~Webserver();
 	void start();
 private:
@@ -34,6 +34,7 @@ private:
 	struct sockaddr_in serv_addr;
 	std::unique_ptr<Epoller> epoller;
 	std::unique_ptr<ThreadPool> threadpool;
+	std::unique_ptr<TimeHeap> timeheap;
 	//std::unordered_map<int, HttpConn> users;
 	//std::unordered_map<int, sockaddr_in> users;
 	int client_fd;

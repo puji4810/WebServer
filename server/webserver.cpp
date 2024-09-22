@@ -19,6 +19,7 @@ Webserver::Webserver(int port, std::string user, std::string password, std::stri
 {
 	epoller = std::make_unique<Epoller>();
 	threadpool = std::make_unique<ThreadPool>();
+	timeheap = std::make_unique<TimeHeap>();
 	threadpool->start();
 	Log::getInstance().init("./log/webserver.log", LogLevel::DEBUG, 1024);
 	if(!initsocket()){
@@ -56,7 +57,7 @@ bool Webserver::initsocket(){
 	if(opt_mode){
 		opt_linger.l_onoff = 1;
 		opt_linger.l_linger = 10;
-	}
+	}//优雅关闭
 	int ret = setsockopt(listen_fd, SOL_SOCKET, SO_LINGER, &opt_linger, sizeof(opt_linger));
 	check_ret(ret, "setsockopt error");
 

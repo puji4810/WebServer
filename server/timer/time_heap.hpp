@@ -115,7 +115,7 @@ public:
 	}
 
 private:
-	std::priority_queue<Timer*, std::vector<Timer*>, std::greater<Timer*>> timers;
+	std::priority_queue<Timer *, std::vector<Timer *>, TimerCmp> timers;
 	std::unordered_map<int, Timer *> fdMap;
 };
 
