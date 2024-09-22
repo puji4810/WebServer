@@ -42,6 +42,14 @@ private:
 	int fd;
 };
 
+struct TimerCmp
+{
+	bool operator()(Timer *a, Timer *b) const
+	{
+		return a->getExpireTime() > b->getExpireTime();
+	}
+};
+
 class TimeHeap{//时间堆
 public:
 	using Clock = std::chrono::steady_clock;
@@ -49,13 +57,66 @@ public:
 
 	TimeHeap() = default;
 
-	void addTimer(int fd, Clock::time_point expireTime, TimerCallback cb) {
-		auto expireTimePoint = expireTime;
+	Timer* addTimer(int fd, std::chrono::milliseconds duration, TimerCallback cb)
+	{
+		auto expireTimePoint = Clock::now() + duration;
+		Timer *timer = new Timer(fd, expireTimePoint, cb);
+		timers.push(timer);
+		fdMap[fd] = timer;
+		return timer;
+	}
+
+	void removeTimer(int fd){
+		auto target = fdMap.find(fd);
+		if(target != fdMap.end()){
+			target->second->invalidate();
+			fdMap.erase(target);
+		}
+	}
+
+	void tick(){
+		while(!timers.empty()){
+			auto cur = Clock::now();
+			auto timer = timers.top();
+			if(!timer->isValid()){//无效定时器(removeTimer)
+				timers.pop();
+				delete timer;
+				continue;
+			}
+			if(timer->getExpireTime() > cur){
+				break;//时间未到
+			}
+			timer->runCallback();
+			timers.pop();
+			delete timer;//时间到了，删除定时器
+		}
+	}
+
+	std::chrono::milliseconds getNextTimeout() const{
+		if(timers.empty()){
+			return std::chrono::milliseconds(-1);
+		}
+		auto now = Clock::now();
+		auto nextExpireTime = timers.top()->getExpireTime();
+		return std::chrono::duration_cast<std::chrono::milliseconds>(nextExpireTime - now);
+	}
+
+	void clear(){
+		while(!timers.empty()){
+			auto timer = timers.top();
+			timers.pop();
+			delete timer;
+		}
+		fdMap.clear();
+	}
+
+	~TimeHeap(){
+		clear();
 	}
 
 private:
 	std::priority_queue<Timer*, std::vector<Timer*>, std::greater<Timer*>> timers;
-	std::unordered_map<int, Timer *> fdMap_;
+	std::unordered_map<int, Timer *> fdMap;
 };
 
 #endif
