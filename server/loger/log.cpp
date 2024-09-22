@@ -15,6 +15,7 @@ bool Log::init(const std::string &filePath, LogLevel level, size_t maxQueueSize)
 	}
 	logFile.close(); // 文件可以正常打开，关闭，后续异步写入
 
+	buffer.retrieveAll();
 	stopLogging = false;
 	this->level = level;
 	this->filePath = filePath;
@@ -35,7 +36,8 @@ void Log::stop(){
 void Log::log(LogLevel level, std::string msg){
 	if (level >= this->level)
 	{
-		logQueue->push(formatLog(level, msg));
+		buffer.append(formatLog(level, msg).c_str(), formatLog(level, msg).size());
+		logQueue->push(buffer.retrieveAllAsString());
 	}
 }
 

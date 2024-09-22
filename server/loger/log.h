@@ -55,7 +55,7 @@ private:
 	std::atomic<bool> stopLogging;
 	std::unique_ptr<BlockQueue<std::string>> logQueue;
 	std::thread logthread;
-	//Buffer buffer;
+	Buffer buffer;
 };
 
 #define LOG_BASE(level, format, ...)                     \
