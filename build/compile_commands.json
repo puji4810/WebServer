@@ -1,0 +1,27 @@
+[
+{
+  "directory": "/home/puji/WebServer/build",
+  "command": "/mnt/c/Users/puji/mingw64/bin/g++.exe   -g -std=gnu++20 -o CMakeFiles/server.dir/main.cpp.o -c /home/puji/WebServer/main.cpp",
+  "file": "/home/puji/WebServer/main.cpp"
+},
+{
+  "directory": "/home/puji/WebServer/build",
+  "command": "/mnt/c/Users/puji/mingw64/bin/g++.exe   -g -std=gnu++20 -o CMakeFiles/server.dir/server/buffer/buffer.cpp.o -c /home/puji/WebServer/server/buffer/buffer.cpp",
+  "file": "/home/puji/WebServer/server/buffer/buffer.cpp"
+},
+{
+  "directory": "/home/puji/WebServer/build",
+  "command": "/mnt/c/Users/puji/mingw64/bin/g++.exe   -g -std=gnu++20 -o CMakeFiles/server.dir/server/epoller.cpp.o -c /home/puji/WebServer/server/epoller.cpp",
+  "file": "/home/puji/WebServer/server/epoller.cpp"
+},
+{
+  "directory": "/home/puji/WebServer/build",
+  "command": "/mnt/c/Users/puji/mingw64/bin/g++.exe   -g -std=gnu++20 -o CMakeFiles/server.dir/server/loger/log.cpp.o -c /home/puji/WebServer/server/loger/log.cpp",
+  "file": "/home/puji/WebServer/server/loger/log.cpp"
+},
+{
+  "directory": "/home/puji/WebServer/build",
+  "command": "/mnt/c/Users/puji/mingw64/bin/g++.exe   -g -std=gnu++20 -o CMakeFiles/server.dir/server/webserver.cpp.o -c /home/puji/WebServer/server/webserver.cpp",
+  "file": "/home/puji/WebServer/server/webserver.cpp"
+}
+]
