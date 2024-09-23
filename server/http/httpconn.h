@@ -1,0 +1,30 @@
+#ifndef HTTPCONN_H
+#define HTTPCONN_H
+#include <iostream>
+#include <string>
+#include <unistd.h> // for close
+#include <sys/types.h>
+#include <sys/socket.h>
+#include "httprequest.h"
+#include "httpresponse.h"
+#include "../buffer/buffer.h"
+
+class HttpConn{
+public:
+	HttpConn();
+	~HttpConn();
+
+	void init(int fd);
+	bool read();
+	bool write();
+	void closeconn();
+	bool isKeepAlive() const { return request.isKeepAlive(); }
+private:
+	int sockfd;
+	HttpRequest request;
+	HttpResponse response;
+	Buffer readBuffer;
+	Buffer writeBuffer;
+};
+
+#endif
