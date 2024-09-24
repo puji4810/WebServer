@@ -21,7 +21,7 @@
 #include "./http/httpconn.h"	
 
 struct Webserver{
-	Webserver(int port, std::string user,std::string password,std::string databasename,bool opt_mode);
+	Webserver(int port,bool opt_mode);
 	~Webserver();
 	void start();
 private:
@@ -29,9 +29,6 @@ private:
 	int listen_fd;
 	int epfd;
 	bool opt_mode;
-	std::string user;
-	std::string password;
-	std::string databasename;
 	struct sockaddr_in serv_addr;
 	std::unique_ptr<Epoller> epoller;
 	std::unique_ptr<ThreadPool> threadpool;

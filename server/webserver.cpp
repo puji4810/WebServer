@@ -14,8 +14,8 @@
 		exit(1);                       \
 	} // 特别检查0的情况
 
-Webserver::Webserver(int port, std::string user, std::string password, std::string databasename, bool opt_mode):
-	port(port), user(user), password(password), databasename(databasename), opt_mode(opt_mode)
+Webserver::Webserver(int port, bool opt_mode):
+	port(port), opt_mode(opt_mode)
 {
 	epoller = std::make_unique<Epoller>();
 	threadpool = std::make_unique<ThreadPool>();

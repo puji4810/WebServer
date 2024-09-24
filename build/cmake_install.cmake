@@ -1,4 +1,4 @@
-# Install script for directory: /home/puji/WebServer
+# Install script for directory: /home/pu/WebServer
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/puji/WebServer/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/pu/WebServer/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

@@ -1,12 +1,13 @@
 #include "server/webserver.h"
-
+#include <signal.h>
 
 int main(int argc, char *argv[])
 {
-	std::string user = "root";
-	std::string password = "1";
-	std::string databasename = "yourdb";
+	signal(SIGPIPE, SIG_IGN); // 忽略 SIGPIPE 信号
 	int PORT = 8019;
-	Webserver webserver(PORT, user, password, databasename, true);
+	if(argc == 2){
+		PORT = atoi(argv[1]);
+	}
+	Webserver webserver(PORT, true);
 	webserver.start();
 }

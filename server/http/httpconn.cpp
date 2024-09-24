@@ -36,15 +36,6 @@ bool HttpConn::read()
 
 bool HttpConn::write()
 {
-	char cwd[PATH_MAX]; // 定义缓冲区存储目录路径
-	if (getcwd(cwd, sizeof(cwd)) != NULL)
-	{
-		std::cout << "Current working directory: " << cwd << std::endl;
-	}
-	else
-	{
-		std::cerr << "Error getting current working directory" << std::endl;
-	}
 	Buffer filebuf;
 	std::string path = request.getPath();
 
@@ -54,7 +45,6 @@ bool HttpConn::write()
 		path = "/index.html";
 	}
 	std::string filepath = "../resources" + path; // 拼接文件路径
-	std::cout << "filepath: " << filepath << std::endl;
 
 	// 如果文件存在，读取文件内容
 	if (filebuf.readFile(filepath))
