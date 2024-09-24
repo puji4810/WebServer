@@ -345,4 +345,9 @@ CMakeFiles/server.dir/server/webserver.cpp.o: \
  /usr/local/gcc-14.1.0/include/c++/14.1.0/variant \
  /usr/local/gcc-14.1.0/include/c++/14.1.0/bits/unicode.h \
  /usr/local/gcc-14.1.0/include/c++/14.1.0/bits/unicode-data.h \
- /home/puji/WebServer/server/./timer/../loger/log.h
+ /home/puji/WebServer/server/./timer/../loger/log.h \
+ /home/puji/WebServer/server/./http/httpconn.h \
+ /home/puji/WebServer/server/./http/httprequest.h \
+ /home/puji/WebServer/server/./http/httpresponse.h \
+ /home/puji/WebServer/server/./http/../buffer/buffer.h \
+ /home/puji/WebServer/server/./http/../loger/log.h

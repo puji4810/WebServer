@@ -105,3 +105,25 @@ void Buffer::makeSpace(size_t len)
 	}
 }
 
+bool Buffer::readFile(const std::string& filePath){
+	std::ifstream file(filePath, std::ios::binary);
+	if(!file.is_open()){
+		return false;
+	}
+
+	std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+	this->append(content);
+	file.close();
+	return true;
+}
+
+bool Buffer::writeFile(const std::string& filePath){
+	std::ofstream file(filePath, std::ios::binary);
+	if(!file.is_open()){
+		return false;
+	}
+
+	file.write(this->peek(), this->readableBytes());
+	file.close();
+	return true;
+}

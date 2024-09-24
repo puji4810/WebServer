@@ -6,10 +6,14 @@
 #include <cstring>
 #include <unistd.h>	 // for read/write
 #include <sys/uio.h> // for readv
+#include <sstream>
+#include <fstream>
 
 class Buffer
 {
 public:
+	//Buffer() = default;
+
 	Buffer(size_t initialSize = 1024)
 		: buffer_(initialSize), readIndex_(0), writeIndex_(0) {}
 
@@ -53,6 +57,9 @@ public:
 	// 将缓冲区中的数据写入套接字
 	ssize_t writeFd(int fd, int *savedErrno);
 
+	bool readFile(const std::string &filePath);
+
+	bool writeFile(const std::string &filePath);
 private:
 	// 返回缓冲区的起始地址
 	char *begin() { return &*buffer_.begin(); }

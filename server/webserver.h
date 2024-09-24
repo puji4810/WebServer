@@ -18,6 +18,7 @@
 #include "thread_pool.hpp"
 #include "./loger/log.h"
 #include "./timer/time_heap.hpp"
+#include "./http/httpconn.h"	
 
 struct Webserver{
 	Webserver(int port, std::string user,std::string password,std::string databasename,bool opt_mode);
@@ -47,6 +48,7 @@ private:
 	void handleRequest(int fd);
 	int setnonblocking(int fd);
 	Log& log = Log::getInstance();
+	Buffer buf;
 };
 
 #endif

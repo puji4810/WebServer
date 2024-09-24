@@ -140,22 +140,23 @@ void Webserver::eventLoop()
 
 void Webserver::handleRequest(int fd)
 {
-	char buffer[30000] = {0};
-	int ret = read(fd, buffer, 30000);
-	check_ret(ret, "read error");
-	std::cout << "Received request:\n"
-			  << buffer << std::endl;
+	HttpConn httpconn;
+	httpconn.init(fd);
 
-	const char *response =
-		"HTTP/1.1 200 OK\r\n"
-		"Content-Type: text/html\r\n"
-		"Connection: close\r\n"
-		"\r\n"
-		"<html><body><h1>Hello, World!</h1></body></html>";
+	if (!httpconn.read())
+	{
+		LOG_ERROR("httpconn read error");
+		httpconn.closeconn();
+		return;
+	}
 
-	// 发送响应到客户端
-	write(fd, response, strlen(response));
+	if (!httpconn.write())
+	{
+		LOG_ERROR("httpconn write error");
+		httpconn.closeconn();
+		return;
+	}
 
-	// 关闭连接
-	close(fd);
+	LOG_INFO("httpconn write success");
+	httpconn.closeconn();
 }

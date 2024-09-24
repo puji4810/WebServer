@@ -19,6 +19,7 @@ file(GLOB SOURCES
     #"server/buffer/buffer.hpp"
     "server/loger/log.cpp"
     #"server/loger/log.hpp"
+    "server/http/*.cpp"
 )
 
 # 可执行文件生成路径

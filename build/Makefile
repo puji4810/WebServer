@@ -201,6 +201,78 @@ server/epoller.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/epoller.cpp.s
 .PHONY : server/epoller.cpp.s
 
+server/http/httpconn.o: server/http/httpconn.cpp.o
+.PHONY : server/http/httpconn.o
+
+# target to build an object file
+server/http/httpconn.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/http/httpconn.cpp.o
+.PHONY : server/http/httpconn.cpp.o
+
+server/http/httpconn.i: server/http/httpconn.cpp.i
+.PHONY : server/http/httpconn.i
+
+# target to preprocess a source file
+server/http/httpconn.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/http/httpconn.cpp.i
+.PHONY : server/http/httpconn.cpp.i
+
+server/http/httpconn.s: server/http/httpconn.cpp.s
+.PHONY : server/http/httpconn.s
+
+# target to generate assembly for a file
+server/http/httpconn.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/http/httpconn.cpp.s
+.PHONY : server/http/httpconn.cpp.s
+
+server/http/httprequest.o: server/http/httprequest.cpp.o
+.PHONY : server/http/httprequest.o
+
+# target to build an object file
+server/http/httprequest.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/http/httprequest.cpp.o
+.PHONY : server/http/httprequest.cpp.o
+
+server/http/httprequest.i: server/http/httprequest.cpp.i
+.PHONY : server/http/httprequest.i
+
+# target to preprocess a source file
+server/http/httprequest.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/http/httprequest.cpp.i
+.PHONY : server/http/httprequest.cpp.i
+
+server/http/httprequest.s: server/http/httprequest.cpp.s
+.PHONY : server/http/httprequest.s
+
+# target to generate assembly for a file
+server/http/httprequest.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/http/httprequest.cpp.s
+.PHONY : server/http/httprequest.cpp.s
+
+server/http/httpresponse.o: server/http/httpresponse.cpp.o
+.PHONY : server/http/httpresponse.o
+
+# target to build an object file
+server/http/httpresponse.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/http/httpresponse.cpp.o
+.PHONY : server/http/httpresponse.cpp.o
+
+server/http/httpresponse.i: server/http/httpresponse.cpp.i
+.PHONY : server/http/httpresponse.i
+
+# target to preprocess a source file
+server/http/httpresponse.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/http/httpresponse.cpp.i
+.PHONY : server/http/httpresponse.cpp.i
+
+server/http/httpresponse.s: server/http/httpresponse.cpp.s
+.PHONY : server/http/httpresponse.s
+
+# target to generate assembly for a file
+server/http/httpresponse.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/http/httpresponse.cpp.s
+.PHONY : server/http/httpresponse.cpp.s
+
 server/loger/log.o: server/loger/log.cpp.o
 .PHONY : server/loger/log.o
 
@@ -267,6 +339,15 @@ help:
 	@echo "... server/epoller.o"
 	@echo "... server/epoller.i"
 	@echo "... server/epoller.s"
+	@echo "... server/http/httpconn.o"
+	@echo "... server/http/httpconn.i"
+	@echo "... server/http/httpconn.s"
+	@echo "... server/http/httprequest.o"
+	@echo "... server/http/httprequest.i"
+	@echo "... server/http/httprequest.s"
+	@echo "... server/http/httpresponse.o"
+	@echo "... server/http/httpresponse.i"
+	@echo "... server/http/httpresponse.s"
 	@echo "... server/loger/log.o"
 	@echo "... server/loger/log.i"
 	@echo "... server/loger/log.s"

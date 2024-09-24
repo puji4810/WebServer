@@ -8,6 +8,9 @@
 #include "httprequest.h"
 #include "httpresponse.h"
 #include "../buffer/buffer.h"
+#include <sstream>
+#include <fstream>
+#include "../loger/log.h"
 
 class HttpConn{
 public:
