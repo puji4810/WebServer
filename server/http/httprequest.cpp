@@ -1,16 +1,33 @@
 #include "httprequest.h"
 
 bool HttpRequest::parse(const std::string &request){
+
 	size_t pos = 0;
 	size_t line_end = request.find("\r\n", pos);
+	if (line_end == std::string::npos)
+	{
+		LOG_ERROR("Failed to find end of request line");
+		return false;
+	}
 
 	std::string request_line = request.substr(pos, line_end - pos);
+	LOG_INFO("Request Line: %s", request_line.c_str());
+
 	pos = line_end + 2;
 
 	std::istringstream request_stream(request_line);
 	std::string methodStr, pathStr, versionStr;
 	request_stream >> methodStr >> pathStr >> versionStr;
 
+	// 确认解析是否成功
+	if (methodStr.empty() || pathStr.empty() || versionStr.empty())
+	{
+		LOG_ERROR("Failed to parse request line, Method: [%s], Path: [%s], Version: [%s]",
+				  methodStr.c_str(), pathStr.c_str(), versionStr.c_str());
+		return false;
+	}
+
+	// 赋值并打印路径
 	this->method = methodStr;
 	this->path = pathStr;
 	this->version = versionStr;

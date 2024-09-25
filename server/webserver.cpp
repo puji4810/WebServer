@@ -99,12 +99,37 @@ void Webserver::eventLoop()
 
 			if (fd == listen_fd)
 			{
+<<<<<<< HEAD
 				handleListen();
 				//threadpool->submit(&Webserver::handleListen, this);
+=======
+				// 监听到新的客户端连接，处理 accept
+				struct sockaddr_in addr;
+				socklen_t len = sizeof(addr);
+				int conn_fd = accept(listen_fd, (struct sockaddr *)&addr, &len);
+
+				if (conn_fd > 0)
+				{
+					setnonblocking(conn_fd);
+					clients[conn_fd].init(conn_fd);
+					// 将新连接的 fd 添加到 epoll 中监听读事件 (EPOLLIN)
+					epoller->addfd(conn_fd, EPOLLIN | EPOLLET | EPOLLONESHOT);  // 边缘触发+oneshot模式
+					LOG_INFO("New connection accepted, fd: %d", conn_fd);
+
+					timeheap->addTimer(conn_fd, std::chrono::milliseconds(5000), [this, conn_fd](int)
+					{closeConn(conn_fd);});
+				}
+				else
+				{
+					std::cerr << "accept error" << std::endl;
+					LOG_ERROR("accept error");
+				}
+>>>>>>> 0af5446257737d982c488c12d9f84d084ce148ae
 			}
 			else if (events & EPOLLIN)
 			{
 				// 如果是可读事件，提交请求处理到线程池
+<<<<<<< HEAD
 				// threadpool->submit([this, fd]()
 				// {
                 //     handleRequest(fd);
@@ -112,6 +137,35 @@ void Webserver::eventLoop()
 				// 	timeheap->addTimer(fd, std::chrono::milliseconds(50000), [this, fd](int)
 				// 	{ closeConn(fd); }); });
 				threadpool->submit(&Webserver::handleRequest, this, fd);
+=======
+				threadpool->submit([this, fd]()
+				{
+                    handleRequest(fd);
+                    // 重置定时器，如果5分钟内没有新的数据交互就超时
+					timeheap->addTimer(fd, std::chrono::milliseconds(50000), [this, fd](int)
+					{ closeConn(fd); }); });
+			}
+			else if (events & EPOLLOUT){
+				// 如果是可写事件，提交响应写入到线程池
+				threadpool->submit([this, fd]()
+				{
+					handleWrite(fd);
+					// 重置定时器，如果5分钟内没有新的数据交互就超时
+					timeheap->addTimer(fd, std::chrono::milliseconds(50000), [this, fd](int)
+					{ closeConn(fd); }); });
+			}
+			else if (events & EPOLLRDHUP)
+			{
+				// 客户端关闭连接，关闭服务器这边的连接
+				LOG_INFO("client closed connection");
+				close(fd);
+			}
+			else if (events & EPOLLERR)
+			{
+				// 处理连接上的错误
+				LOG_ERROR("connection error");
+				close(fd);
+>>>>>>> 0af5446257737d982c488c12d9f84d084ce148ae
 			}
 			else if (events & EPOLLOUT){
 				// 如果是可写事件，提交响应写入到线程池
@@ -140,6 +194,7 @@ void Webserver::eventLoop()
 	}
 }
 
+<<<<<<< HEAD
 
 inline void Webserver::handleListen(){
 	// 监听到新的客户端连接，处理 accept
@@ -175,11 +230,25 @@ void Webserver::handleRequest(int fd)
 			LOG_ERROR("httpconn read error, errno: %d", errno);
 			return;
 		}
+=======
+
+void Webserver::handleRequest(int fd)
+{
+	//std::lock_guard<std::mutex> lock(clients_mutex);
+	auto &httpconn = clients[fd];
+
+	if (!httpconn.read())
+	{
+		LOG_ERROR("httpconn read error, errno: %d", errno);
+		httpconn.closeconn();
+		return;
+>>>>>>> 0af5446257737d982c488c12d9f84d084ce148ae
 	}
 
 	epoller->modfd(fd, EPOLLOUT | EPOLLET | EPOLLONESHOT);
 }
 
+<<<<<<< HEAD
 void Webserver::handleResponse(int fd)
 {
 	auto &httpconn = clients[fd];
@@ -202,11 +271,36 @@ void Webserver::handleResponse(int fd)
 	httpconn.closeconn();
 	// timeheap->addTimer(fd, std::chrono::milliseconds(500), [this, fd](int)
 	// 				{ closeConn(fd); });
+=======
+void Webserver::handleWrite(int fd)
+{
+	//std::lock_guard<std::mutex> lock(clients_mutex);
+	auto &httpconn = clients[fd];
+
+    // 写入响应数据
+    if (!httpconn.write())
+    {
+		LOG_ERROR("httpconn write error, errno: %d", errno);
+		httpconn.closeconn(); // 写入失败，关闭连接
+		return;
+	}
+
+    // 如果是长连接，继续监听读事件，否则关闭连接
+    if (httpconn.isKeepAlive())
+    {
+        epoller->modfd(fd, EPOLLIN | EPOLLET | EPOLLONESHOT);  // 继续监听读事件
+    }
+    else
+    {
+        httpconn.closeconn();  // 非 Keep-Alive 连接，关闭连接
+	}
+>>>>>>> 0af5446257737d982c488c12d9f84d084ce148ae
 }
 
 void Webserver::closeConn(int fd)
 {
 	std::lock_guard<std::mutex> lock(clients_mutex);
+<<<<<<< HEAD
     if (fd < 0) {
         return;
     }
@@ -217,4 +311,12 @@ void Webserver::closeConn(int fd)
         it->second.closeconn(); // 确保关闭连接
         clients.erase(it);      // 使用迭代器安全地删除
     } 
+=======
+	if (clients.find(fd) != clients.end())
+	{
+		LOG_INFO("Connection close, fd: %d", fd);
+		clients[fd].closeconn(); // 关闭连接
+		clients.erase(fd);		 // 从clients中删除
+	}
+>>>>>>> 0af5446257737d982c488c12d9f84d084ce148ae
 }

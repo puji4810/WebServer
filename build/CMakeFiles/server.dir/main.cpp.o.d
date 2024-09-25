@@ -342,9 +342,14 @@ CMakeFiles/server.dir/main.cpp.o: /home/pu/WebServer/main.cpp \
  /home/pu/WebServer/server/./timer/../loger/log.h \
  /home/pu/WebServer/server/./http/httpconn.h \
  /home/pu/WebServer/server/./http/httprequest.h \
+ /home/pu/WebServer/server/./http/../loger/log.h \
  /home/pu/WebServer/server/./http/httpresponse.h \
  /home/pu/WebServer/server/./http/../buffer/buffer.h \
+<<<<<<< HEAD
  /home/pu/WebServer/server/./http/../loger/log.h /usr/include/signal.h \
+=======
+ /usr/include/signal.h \
+>>>>>>> 0af5446257737d982c488c12d9f84d084ce148ae
  /usr/include/x86_64-linux-gnu/bits/signum-generic.h \
  /usr/include/x86_64-linux-gnu/bits/signum-arch.h \
  /usr/include/x86_64-linux-gnu/bits/types/sig_atomic_t.h \

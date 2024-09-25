@@ -213,22 +213,6 @@ CMakeFiles/server.dir/server/http/httpconn.cpp.o: \
  /usr/local/include/c++/14.1.0/bits/erase_if.h \
  /usr/local/include/c++/14.1.0/sstream \
  /usr/local/include/c++/14.1.0/bits/sstream.tcc \
- /home/pu/WebServer/server/http/httpresponse.h \
- /home/pu/WebServer/server/http/../buffer/buffer.h \
- /usr/local/include/c++/14.1.0/vector \
- /usr/local/include/c++/14.1.0/bits/stl_uninitialized.h \
- /usr/local/include/c++/14.1.0/bits/stl_vector.h \
- /usr/local/include/c++/14.1.0/bits/stl_bvector.h \
- /usr/local/include/c++/14.1.0/bits/vector.tcc \
- /usr/local/include/c++/14.1.0/cstring /usr/include/string.h \
- /usr/include/strings.h /usr/include/x86_64-linux-gnu/sys/uio.h \
- /usr/include/x86_64-linux-gnu/bits/uio_lim.h \
- /usr/include/x86_64-linux-gnu/bits/uio-ext.h \
- /usr/local/include/c++/14.1.0/fstream \
- /usr/local/include/c++/14.1.0/bits/codecvt.h \
- /usr/local/include/c++/14.1.0/x86_64-pc-linux-gnu/bits/basic_file.h \
- /usr/local/include/c++/14.1.0/x86_64-pc-linux-gnu/bits/c++io.h \
- /usr/local/include/c++/14.1.0/bits/fstream.tcc \
  /home/pu/WebServer/server/http/../loger/log.h \
  /usr/local/include/c++/14.1.0/mutex \
  /usr/local/include/c++/14.1.0/bits/chrono.h \
@@ -253,7 +237,8 @@ CMakeFiles/server.dir/server/http/httpconn.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/local_lim.h \
  /usr/include/linux/limits.h \
  /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
- /usr/include/x86_64-linux-gnu/bits/xopen_lim.h /usr/include/syscall.h \
+ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
+ /usr/include/x86_64-linux-gnu/bits/uio_lim.h /usr/include/syscall.h \
  /usr/include/x86_64-linux-gnu/sys/syscall.h \
  /usr/include/x86_64-linux-gnu/asm/unistd.h \
  /usr/include/x86_64-linux-gnu/asm/unistd_64.h \
@@ -265,7 +250,8 @@ CMakeFiles/server.dir/server/http/httpconn.cpp.o: \
  /usr/local/include/c++/14.1.0/bits/atomic_timed_wait.h \
  /usr/local/include/c++/14.1.0/bits/this_thread_sleep.h \
  /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/semaphore.h \
- /usr/include/x86_64-linux-gnu/bits/semaphore.h /usr/include/assert.h \
+ /usr/include/x86_64-linux-gnu/bits/semaphore.h /usr/include/string.h \
+ /usr/include/strings.h /usr/include/assert.h \
  /usr/include/x86_64-linux-gnu/sys/stat.h \
  /usr/include/x86_64-linux-gnu/bits/stat.h \
  /usr/include/x86_64-linux-gnu/bits/struct_stat.h \
@@ -282,12 +268,25 @@ CMakeFiles/server.dir/server/http/httpconn.cpp.o: \
  /usr/local/include/c++/14.1.0/bits/allocated_ptr.h \
  /usr/local/include/c++/14.1.0/ext/concurrence.h \
  /usr/local/include/c++/14.1.0/bits/align.h \
+ /usr/local/include/c++/14.1.0/bits/stl_uninitialized.h \
  /usr/local/include/c++/14.1.0/queue /usr/local/include/c++/14.1.0/deque \
  /usr/local/include/c++/14.1.0/bits/stl_deque.h \
  /usr/local/include/c++/14.1.0/bits/deque.tcc \
+ /usr/local/include/c++/14.1.0/vector \
+ /usr/local/include/c++/14.1.0/bits/stl_vector.h \
+ /usr/local/include/c++/14.1.0/bits/stl_bvector.h \
+ /usr/local/include/c++/14.1.0/bits/vector.tcc \
  /usr/local/include/c++/14.1.0/bits/stl_heap.h \
  /usr/local/include/c++/14.1.0/bits/stl_queue.h \
  /home/pu/WebServer/server/http/../loger/../buffer/buffer.h \
+ /usr/local/include/c++/14.1.0/cstring \
+ /usr/include/x86_64-linux-gnu/sys/uio.h \
+ /usr/include/x86_64-linux-gnu/bits/uio-ext.h \
+ /usr/local/include/c++/14.1.0/fstream \
+ /usr/local/include/c++/14.1.0/bits/codecvt.h \
+ /usr/local/include/c++/14.1.0/x86_64-pc-linux-gnu/bits/basic_file.h \
+ /usr/local/include/c++/14.1.0/x86_64-pc-linux-gnu/bits/c++io.h \
+ /usr/local/include/c++/14.1.0/bits/fstream.tcc \
  /usr/local/include/c++/14.1.0/memory \
  /usr/local/include/c++/14.1.0/bits/stl_tempbuf.h \
  /usr/local/include/c++/14.1.0/bits/stl_raw_storage_iter.h \
@@ -311,4 +310,6 @@ CMakeFiles/server.dir/server/http/httpconn.cpp.o: \
  /usr/local/include/c++/14.1.0/bits/quoted_string.h \
  /usr/local/include/c++/14.1.0/codecvt \
  /usr/local/include/c++/14.1.0/bits/fs_dir.h \
- /usr/local/include/c++/14.1.0/bits/fs_ops.h
+ /usr/local/include/c++/14.1.0/bits/fs_ops.h \
+ /home/pu/WebServer/server/http/httpresponse.h \
+ /home/pu/WebServer/server/http/../buffer/buffer.h
