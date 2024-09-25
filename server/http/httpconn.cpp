@@ -19,7 +19,11 @@ void HttpConn::init(int fd)
 bool HttpConn::read()
 {
 	int saveErrno = 0;
-	ssize_t bytesRead = readBuffer.readFd(sockfd, &saveErrno);
+	ssize_t bytesRead;
+	{
+		std::lock_guard<std::mutex> lock{HttpConn_mutex};
+		bytesRead = readBuffer.readFd(sockfd, &saveErrno);
+	}
 
 	if (bytesRead <= 0)
 	{
@@ -79,7 +83,13 @@ bool HttpConn::write()
 
 	// 现在将缓冲区的数据写入客户端
 	int saveErrno = 0;
-	ssize_t bytesWrite = writeBuffer.writeFd(sockfd, &saveErrno);
+	ssize_t bytesWrite;
+	{
+		std::lock_guard<std::mutex> lock{HttpConn_mutex};
+		bytesWrite = writeBuffer.writeFd(sockfd, &saveErrno);
+	}
+
+	
 
 	if (bytesWrite <= 0)
 	{
@@ -91,14 +101,16 @@ bool HttpConn::write()
 
 void HttpConn::closeconn()
 {
-	close(sockfd);
-	sockfd = -1;
-}
-
-HttpConn::~HttpConn()
-{
-	if (sockfd != -1)
+	std::lock_guard<std::mutex> lock{HttpConn_mutex};
+	if (!isFdclosed)
 	{
 		close(sockfd);
+		isFdclosed = true;
+		sockfd = -1;
+	}
+	else
+	{
+		return;
 	}
 }
+

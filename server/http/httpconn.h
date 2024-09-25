@@ -14,8 +14,10 @@
 
 class HttpConn{
 public:
+	std::mutex HttpConn_mutex;
+
 	HttpConn();
-	~HttpConn();
+	~HttpConn() = default;
 
 	void init(int fd);
 	bool read();
@@ -28,6 +30,7 @@ private:
 	HttpResponse response;
 	Buffer readBuffer;
 	Buffer writeBuffer;
+	bool isFdclosed = false;
 };
 
 #endif

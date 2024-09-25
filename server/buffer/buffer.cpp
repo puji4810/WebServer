@@ -1,4 +1,5 @@
 #include "buffer.h"
+#include "../loger/log.h"
 
 void Buffer::retrieve(size_t len)
 {
@@ -58,6 +59,7 @@ ssize_t Buffer::readFd(int fd, int *savedErrno)
 	if (n < 0)
 	{
 		*savedErrno = errno;
+		LOG_ERROR("BUFFER::writeFd has error:%d", *savedErrno);
 	}
 	else if (static_cast<size_t>(n) <= writable)
 	{
@@ -80,6 +82,7 @@ ssize_t Buffer::writeFd(int fd, int *savedErrno)
 	if (n < 0)
 	{
 		*savedErrno = errno;
+		LOG_ERROR("BUFFER::writeFd has error:%d", *savedErrno);
 	}
 	else
 	{
