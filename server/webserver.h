@@ -33,7 +33,8 @@ private:
 	std::unique_ptr<Epoller> epoller;
 	std::unique_ptr<ThreadPool> threadpool;
 	std::unique_ptr<TimeHeap> timeheap;
-	//std::unordered_map<int, HttpConn> users;
+	std::unordered_map<int, HttpConn> clients;
+	std::mutex clients_mutex;
 	//std::unordered_map<int, sockaddr_in> users;
 	int client_fd;
 	bool initsocket();
@@ -43,6 +44,7 @@ private:
 	//void closeConn(int fd);
 	//void addClient(int fd, sockaddr_in addr);
 	void handleRequest(int fd);
+	void handleWrite(int fd);
 	int setnonblocking(int fd);
 	Log& log = Log::getInstance();
 	Buffer buf;

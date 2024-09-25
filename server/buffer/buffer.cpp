@@ -1,5 +1,5 @@
 #include "buffer.h"
-
+#include "../loger/log.h"
 void Buffer::retrieve(size_t len)
 {
 	if (len < readableBytes())
@@ -80,6 +80,11 @@ ssize_t Buffer::writeFd(int fd, int *savedErrno)
 	if (n < 0)
 	{
 		*savedErrno = errno;
+		if (errno == EPIPE)
+		{
+			// 处理 EPIPE 错误，例如记录日志或关闭连接
+			LOG_ERROR("write error: Broken pipe (fd: %d)", fd);
+		}
 	}
 	else
 	{
@@ -105,9 +110,11 @@ void Buffer::makeSpace(size_t len)
 	}
 }
 
-bool Buffer::readFile(const std::string& filePath){
+bool Buffer::readFile(const std::string &filePath)
+{
 	std::ifstream file(filePath, std::ios::binary);
-	if(!file.is_open()){
+	if (!file.is_open())
+	{
 		return false;
 	}
 

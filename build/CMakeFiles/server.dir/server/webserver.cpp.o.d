@@ -343,6 +343,6 @@ CMakeFiles/server.dir/server/webserver.cpp.o: \
  /home/pu/WebServer/server/./timer/../loger/log.h \
  /home/pu/WebServer/server/./http/httpconn.h \
  /home/pu/WebServer/server/./http/httprequest.h \
+ /home/pu/WebServer/server/./http/../loger/log.h \
  /home/pu/WebServer/server/./http/httpresponse.h \
- /home/pu/WebServer/server/./http/../buffer/buffer.h \
- /home/pu/WebServer/server/./http/../loger/log.h
+ /home/pu/WebServer/server/./http/../buffer/buffer.h

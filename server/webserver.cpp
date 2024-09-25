@@ -67,7 +67,7 @@ bool Webserver::initsocket(){
 	ret = listen(listen_fd, 10);
 	check_ret(ret, "listen error");
 
-	ret = epoller->addfd(listen_fd, EPOLLIN);//返回的是bool,0表示失败
+	ret = epoller->addfd(listen_fd, EPOLLIN); // 返回的是bool,0表示失败
 	check_ret0(ret, "epoller addfd error");
 	setnonblocking(listen_fd);
 	std::cout << "server start" << std::endl;
@@ -105,8 +105,12 @@ void Webserver::eventLoop()
 				int conn_fd = accept(listen_fd, (struct sockaddr *)&addr, &len);
 				if (conn_fd > 0)
 				{
-					// 提交新连接的处理到线程池
-					threadpool->submit(&Webserver::handleRequest, this, conn_fd);
+					setnonblocking(conn_fd);
+					clients[conn_fd].init(conn_fd);
+					// 将新连接的 fd 添加到 epoll 中监听读事件 (EPOLLIN)
+					epoller->addfd(conn_fd, EPOLLIN | EPOLLET | EPOLLONESHOT);  // 边缘触发+oneshot模式
+					LOG_INFO("New connection accepted, fd: %d", conn_fd);
+					// threadpool->submit(&Webserver::handleRequest, this, conn_fd);
 				}
 				else
 				{
@@ -119,44 +123,68 @@ void Webserver::eventLoop()
 				// 如果是可读事件，提交请求处理到线程池
 				threadpool->submit(&Webserver::handleRequest, this, fd);
 			}
+			else if (events & EPOLLOUT){
+				// 如果是可写事件，提交响应写入到线程池
+				threadpool->submit(&Webserver::handleWrite, this, fd);
+			}
+			else if (events & EPOLLRDHUP)
+			{
+				// 客户端关闭连接，关闭服务器这边的连接
+				LOG_INFO("client closed connection");
+				close(fd);
+			}
+			else if (events & EPOLLERR)
+			{
+				// 处理连接上的错误
+				LOG_ERROR("connection error");
+				close(fd);
+			}
 		}
 	}
 }
 
-// void Webserver::acceptConn(){
-// 	struct sockaddr_in addr;
-// 	socklen_t len = sizeof(addr);
-// 	int conn_fd = accept(listen_fd, (struct sockaddr *)&addr, &len);
-// 	check_ret(conn_fd, "accept error");
-// 	addClient(conn_fd, addr);
-// 	int ret = epoller->addfd(conn_fd, EPOLLIN);
-// 	check_ret0(ret, "epoller addfd error");
-// 	setnonblocking(conn_fd);
-// }
-
-// void Webserver::addClient(int fd, sockaddr_in addr){
-// 	users[fd] = addr;
-// }
 
 void Webserver::handleRequest(int fd)
 {
-	HttpConn httpconn;
-	httpconn.init(fd);
+	LOG_INFO("handleRequest");
+	auto &httpconn = clients[fd];
 
 	if (!httpconn.read())
 	{
 		LOG_ERROR("httpconn read error");
 		httpconn.closeconn();
+		//clients.erase(fd);
 		return;
 	}
 
-	if (!httpconn.write())
-	{
-		LOG_ERROR("httpconn write error");
-		httpconn.closeconn();
+	epoller->modfd(fd, EPOLLOUT | EPOLLET | EPOLLONESHOT);
+
+	LOG_INFO("httpconn read success");
+}
+
+void Webserver::handleWrite(int fd)
+{
+	LOG_INFO("handleWrite");
+	auto &httpconn = clients[fd];
+
+    // 写入响应数据
+    if (!httpconn.write())
+    {
+		LOG_ERROR("httpconn write error, errno: %d", errno);
+		httpconn.closeconn(); // 写入失败，关闭连接
+		//clients.erase(fd);
 		return;
 	}
 
-	LOG_INFO("httpconn write success");
-	httpconn.closeconn();
+    // 如果是长连接，继续监听读事件，否则关闭连接
+    if (httpconn.isKeepAlive())
+    {
+        epoller->modfd(fd, EPOLLIN | EPOLLET | EPOLLONESHOT);  // 继续监听读事件
+    }
+    else
+    {
+        httpconn.closeconn();  // 非 Keep-Alive 连接，关闭连接
+		//clients.erase(fd);	   // 从 clients 中移除
+	}
+	LOG_INFO("handleWrite success");
 }

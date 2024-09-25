@@ -3,7 +3,7 @@
 #include <string>
 #include <unordered_map>
 #include <sstream>
-
+#include "../loger/log.h"
 class HttpRequest
 {
 private:
