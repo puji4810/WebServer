@@ -40,9 +40,10 @@ private:
 	bool initsocket();
 	void eventListen();
 	void eventLoop();
-	//void acceptConn();
-	//void closeConn(int fd);
-	//void addClient(int fd, sockaddr_in addr);
+	void closeConn(int fd);
+	// void acceptConn();
+	// void closeConn(int fd);
+	// void addClient(int fd, sockaddr_in addr);
 	void handleRequest(int fd);
 	void handleWrite(int fd);
 	int setnonblocking(int fd);

@@ -52,6 +52,7 @@ struct TimerCmp
 
 class TimeHeap{//时间堆
 public:
+	std::mutex Timemutex;
 	using Clock = std::chrono::steady_clock;
 	using TimerCallback = std::function<void(int)>;
 
@@ -59,6 +60,7 @@ public:
 
 	Timer* addTimer(int fd, std::chrono::milliseconds duration, TimerCallback cb)
 	{
+		std::lock_guard<std::mutex> lock(Timemutex);
 		auto expireTimePoint = Clock::now() + duration;
 		Timer *timer = new Timer(fd, expireTimePoint, cb);
 		timers.push(timer);
@@ -67,6 +69,7 @@ public:
 	}
 
 	void removeTimer(int fd){
+		std::lock_guard<std::mutex> lock(Timemutex);
 		auto target = fdMap.find(fd);
 		if(target != fdMap.end()){
 			target->second->invalidate();

@@ -103,6 +103,7 @@ void Webserver::eventLoop()
 				struct sockaddr_in addr;
 				socklen_t len = sizeof(addr);
 				int conn_fd = accept(listen_fd, (struct sockaddr *)&addr, &len);
+
 				if (conn_fd > 0)
 				{
 					setnonblocking(conn_fd);
@@ -110,7 +111,9 @@ void Webserver::eventLoop()
 					// 将新连接的 fd 添加到 epoll 中监听读事件 (EPOLLIN)
 					epoller->addfd(conn_fd, EPOLLIN | EPOLLET | EPOLLONESHOT);  // 边缘触发+oneshot模式
 					LOG_INFO("New connection accepted, fd: %d", conn_fd);
-					// threadpool->submit(&Webserver::handleRequest, this, conn_fd);
+
+					timeheap->addTimer(conn_fd, std::chrono::milliseconds(5000), [this, conn_fd](int)
+					{closeConn(conn_fd);});
 				}
 				else
 				{
@@ -121,11 +124,21 @@ void Webserver::eventLoop()
 			else if (events & EPOLLIN)
 			{
 				// 如果是可读事件，提交请求处理到线程池
-				threadpool->submit(&Webserver::handleRequest, this, fd);
+				threadpool->submit([this, fd]()
+				{
+                    handleRequest(fd);
+                    // 重置定时器，如果5分钟内没有新的数据交互就超时
+					timeheap->addTimer(fd, std::chrono::milliseconds(50000), [this, fd](int)
+					{ closeConn(fd); }); });
 			}
 			else if (events & EPOLLOUT){
 				// 如果是可写事件，提交响应写入到线程池
-				threadpool->submit(&Webserver::handleWrite, this, fd);
+				threadpool->submit([this, fd]()
+				{
+					handleWrite(fd);
+					// 重置定时器，如果5分钟内没有新的数据交互就超时
+					timeheap->addTimer(fd, std::chrono::milliseconds(50000), [this, fd](int)
+					{ closeConn(fd); }); });
 			}
 			else if (events & EPOLLRDHUP)
 			{
@@ -146,25 +159,22 @@ void Webserver::eventLoop()
 
 void Webserver::handleRequest(int fd)
 {
-	LOG_INFO("handleRequest");
+	//std::lock_guard<std::mutex> lock(clients_mutex);
 	auto &httpconn = clients[fd];
 
 	if (!httpconn.read())
 	{
-		LOG_ERROR("httpconn read error");
+		LOG_ERROR("httpconn read error, errno: %d", errno);
 		httpconn.closeconn();
-		//clients.erase(fd);
 		return;
 	}
 
 	epoller->modfd(fd, EPOLLOUT | EPOLLET | EPOLLONESHOT);
-
-	LOG_INFO("httpconn read success");
 }
 
 void Webserver::handleWrite(int fd)
 {
-	LOG_INFO("handleWrite");
+	//std::lock_guard<std::mutex> lock(clients_mutex);
 	auto &httpconn = clients[fd];
 
     // 写入响应数据
@@ -172,7 +182,6 @@ void Webserver::handleWrite(int fd)
     {
 		LOG_ERROR("httpconn write error, errno: %d", errno);
 		httpconn.closeconn(); // 写入失败，关闭连接
-		//clients.erase(fd);
 		return;
 	}
 
@@ -184,7 +193,16 @@ void Webserver::handleWrite(int fd)
     else
     {
         httpconn.closeconn();  // 非 Keep-Alive 连接，关闭连接
-		//clients.erase(fd);	   // 从 clients 中移除
 	}
-	LOG_INFO("handleWrite success");
+}
+
+void Webserver::closeConn(int fd)
+{
+	std::lock_guard<std::mutex> lock(clients_mutex);
+	if (clients.find(fd) != clients.end())
+	{
+		LOG_INFO("Connection close, fd: %d", fd);
+		clients[fd].closeconn(); // 关闭连接
+		clients.erase(fd);		 // 从clients中删除
+	}
 }
