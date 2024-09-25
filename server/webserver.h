@@ -34,18 +34,12 @@ private:
 	std::unique_ptr<ThreadPool> threadpool;
 	std::unique_ptr<TimeHeap> timeheap;
 	std::unordered_map<int, HttpConn> clients;
-<<<<<<< HEAD
 	// std::unordered_map<int, HttpConn> users;
 	// std::unordered_map<int, sockaddr_in> users;
-=======
-	std::mutex clients_mutex;
-	//std::unordered_map<int, sockaddr_in> users;
->>>>>>> 0af5446257737d982c488c12d9f84d084ce148ae
 	int client_fd;
 	bool initsocket();
 	void eventListen();
 	void eventLoop();
-<<<<<<< HEAD
 	//void acceptConn();
 	//void closeConn(int fd);
 	//void addClient(int fd, sockaddr_in addr);
@@ -54,14 +48,6 @@ private:
 	void handleResponse(int fd);
 	void closeConn(int fd);
 	std::mutex clients_mutex;
-=======
-	void closeConn(int fd);
-	// void acceptConn();
-	// void closeConn(int fd);
-	// void addClient(int fd, sockaddr_in addr);
-	void handleRequest(int fd);
-	void handleWrite(int fd);
->>>>>>> 0af5446257737d982c488c12d9f84d084ce148ae
 	int setnonblocking(int fd);
 	Log& log = Log::getInstance();
 	Buffer buf;

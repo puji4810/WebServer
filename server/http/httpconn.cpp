@@ -77,7 +77,6 @@ bool HttpConn::write()
 	writeBuffer.append(response.toString());
 	// 现在将缓冲区的数据写入客户端
 	int saveErrno = 0;
-<<<<<<< HEAD
 	ssize_t bytesWrite;
 	{
 		std::lock_guard<std::mutex> lock{HttpConn_mutex};
@@ -86,9 +85,6 @@ bool HttpConn::write()
 
 	
 
-=======
-	ssize_t bytesWrite = writeBuffer.writeFd(sockfd, &saveErrno);
->>>>>>> 0af5446257737d982c488c12d9f84d084ce148ae
 	if (bytesWrite <= 0)
 	{
 		return false; // 如果写入失败，返回 false

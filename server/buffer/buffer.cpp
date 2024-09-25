@@ -1,9 +1,5 @@
 #include "buffer.h"
 #include "../loger/log.h"
-<<<<<<< HEAD
-
-=======
->>>>>>> 0af5446257737d982c488c12d9f84d084ce148ae
 void Buffer::retrieve(size_t len)
 {
 	if (len < readableBytes())
@@ -85,15 +81,7 @@ ssize_t Buffer::writeFd(int fd, int *savedErrno)
 	if (n < 0)
 	{
 		*savedErrno = errno;
-<<<<<<< HEAD
 		LOG_ERROR("BUFFER::writeFd has error:%d", *savedErrno);
-=======
-		if (errno == EPIPE)
-		{
-			// 处理 EPIPE 错误，例如记录日志或关闭连接
-			LOG_ERROR("write error: Broken pipe (fd: %d)", fd);
-		}
->>>>>>> 0af5446257737d982c488c12d9f84d084ce148ae
 	}
 	else
 	{
