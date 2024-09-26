@@ -58,7 +58,10 @@ ssize_t Buffer::readFd(int fd, int *savedErrno)
 	if (n < 0)
 	{
 		*savedErrno = errno;
-		LOG_ERROR("BUFFER::writeFd has error:%d", *savedErrno);
+		if (errno != EAGAIN && errno != EWOULDBLOCK)
+		{
+			LOG_ERROR("BUFFER::readFd has error:%d", *savedErrno);
+		}
 	}
 	else if (static_cast<size_t>(n) <= writable)
 	{
@@ -81,7 +84,10 @@ ssize_t Buffer::writeFd(int fd, int *savedErrno)
 	if (n < 0)
 	{
 		*savedErrno = errno;
-		LOG_ERROR("BUFFER::writeFd has error:%d", *savedErrno);
+		if (errno != EAGAIN && errno != EWOULDBLOCK)
+		{
+			LOG_ERROR("BUFFER::writeFd has error:%d", *savedErrno);
+		}
 	}
 	else
 	{
@@ -95,13 +101,14 @@ void Buffer::makeSpace(size_t len)
 	if (writableBytes() + prependableBytes() < len)
 	{
 		// 如果缓冲区总空间不够，直接扩展
-		buffer_.resize(writeIndex_ + len);
+		size_t newSize = buffer_.size() + std::max(buffer_.size(), len);
+		buffer_.resize(newSize);
 	}
 	else
 	{
 		// 如果总空间够但前面有未使用的空间，可以进行数据的移动
 		const size_t readable = readableBytes();
-		std::copy(begin() + readIndex_, begin() + writeIndex_, begin());
+		std::memmove(begin(), begin() + readIndex_, readable);
 		readIndex_ = 0;
 		writeIndex_ = readable;
 	}

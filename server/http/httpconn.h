@@ -24,6 +24,7 @@ public:
 	bool write();
 	void closeconn();
 	bool isKeepAlive() const { return request.isKeepAlive(); }
+	int GetFd() const { return sockfd; }
 private:
 	int sockfd;
 	HttpRequest request;

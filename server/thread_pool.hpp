@@ -8,7 +8,6 @@
 #include <vector>
 #include <syncstream>
 #include <functional>
-
 inline std::size_t default_thread_pool_size() noexcept
 {
 	std::size_t num_threads = std::thread::hardware_concurrency() * 2;

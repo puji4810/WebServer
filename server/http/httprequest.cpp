@@ -11,7 +11,7 @@ bool HttpRequest::parse(const std::string &request){
 	}
 
 	std::string request_line = request.substr(pos, line_end - pos);
-	LOG_INFO("Request Line: %s", request_line.c_str());
+	//LOG_INFO("Request Line: %s", request_line.c_str());
 
 	pos = line_end + 2;
 

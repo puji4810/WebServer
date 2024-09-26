@@ -21,7 +21,7 @@ bool HttpConn::read()
 	int saveErrno = 0;
 	ssize_t bytesRead;
 	{
-		std::lock_guard<std::mutex> lock{HttpConn_mutex};
+		//std::lock_guard<std::mutex> lock{HttpConn_mutex};
 		bytesRead = readBuffer.readFd(sockfd, &saveErrno);
 	}
 
@@ -39,7 +39,7 @@ bool HttpConn::read()
 
 bool HttpConn::write()
 {
-	LOG_INFO("httpconn write");
+	//LOG_INFO("httpconn write");
 	Buffer filebuf;
 	std::string path = request.getPath();
 	// 如果请求的是根目录，加载 index.html
@@ -79,7 +79,7 @@ bool HttpConn::write()
 	int saveErrno = 0;
 	ssize_t bytesWrite;
 	{
-		std::lock_guard<std::mutex> lock{HttpConn_mutex};
+		//std::lock_guard<std::mutex> lock{HttpConn_mutex};
 		bytesWrite = writeBuffer.writeFd(sockfd, &saveErrno);
 	}
 
@@ -90,18 +90,19 @@ bool HttpConn::write()
 		return false; // 如果写入失败，返回 false
 	}
 	
-	LOG_INFO("httpconn write success");
+	//LOG_INFO("httpconn write success");
 	return true; // 写入成功，返回 true
 }
 
 void HttpConn::closeconn()
 {
-	std::lock_guard<std::mutex> lock{HttpConn_mutex};
-	if (!isFdclosed)
+	//std::lock_guard<std::mutex> lock{HttpConn_mutex};
+	if (isFdclosed == false)
 	{
 		close(sockfd);
 		isFdclosed = true;
 		sockfd = -1;
+		LOG_INFO("Connection close, sockfd: %d", sockfd);
 	}
 	else
 	{
