@@ -101,12 +101,16 @@ void HttpConn::closeconn()
 	{
 		close(sockfd);
 		isFdclosed = true;
-		sockfd = -1;
+		//sockfd = -1;
 		LOG_INFO("Connection close, sockfd: %d", sockfd);
-	}
-	else
-	{
-		return;
 	}
 }
 
+void HttpConn::reset()
+{
+	request.reset();
+	response = HttpResponse();
+	readBuffer.retrieveAll();
+	writeBuffer.retrieveAll();
+	isFdclosed = false;
+}

@@ -20,10 +20,12 @@ public:
 	~HttpConn() = default;
 
 	void init(int fd);
+	void reset();
 	bool read();
 	bool write();
 	void closeconn();
 	bool isKeepAlive() const { return request.isKeepAlive(); }
+	bool isClosed() const { return isFdclosed; }
 	int GetFd() const { return sockfd; }
 private:
 	int sockfd;

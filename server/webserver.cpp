@@ -18,7 +18,7 @@
 Webserver::Webserver(int port, bool opt_mode):
 	port(port), opt_mode(opt_mode)
 {
-	epoller = std::make_unique<Epoller>();
+	epoller = std::make_unique<Epoller>(4096);
 	threadpool = std::make_unique<ThreadPool>();
 	timeheap = std::make_unique<TimeHeap>();
 	Log::getInstance().init("./log/webserver.log", LogLevel::DEBUG, 4096);
@@ -66,7 +66,7 @@ bool Webserver::initsocket(){
 	ret = bind(listen_fd, (struct sockaddr *)&addr, sizeof(addr));
 	check_ret(ret, "bind error,请检查端口是否被占用");
 
-	ret = listen(listen_fd, 10024);
+	ret = listen(listen_fd, 4096);
 	check_ret(ret, "listen error");
 
 	ret = epoller->addfd(listen_fd, EPOLLIN); // 返回的是bool,0表示失败
@@ -87,7 +87,7 @@ void Webserver::eventLoop()
 {
 	while (1)
 	{
-		int ret = epoller->wait(); // 等待事件发生
+		int ret = epoller->wait(1000); // 等待事件发生
 
 		if (ret < 0)
 		{
@@ -96,7 +96,7 @@ void Webserver::eventLoop()
 			break;
 		}
 
-		// timeheap->tick();
+		//timeheap->tick();
 
 		for (int i = 0; i < ret; i++)
 		{
@@ -149,12 +149,21 @@ void Webserver::handleListen()
 
 		{
 			std::lock_guard<std::mutex> lock(clients_mutex);
+			//检查客户端是否已经存在，是否可以复用	和直接init差距也没啥
+			// if (clients.find(conn_fd) != clients.end())
+			// {
+			// 	clients[conn_fd].reset(); // 重置已有的 client
+			// }
+			// else
+			// {
+			// 	clients[conn_fd].init(conn_fd); // 初始化新的 client
+			// }
 			clients[conn_fd].init(conn_fd);
 		}
 
 		epoller->addfd(conn_fd, EPOLLIN | EPOLLET | EPOLLONESHOT);
 		LOG_INFO("New connection accepted, fd: %d", conn_fd);
-		// 设置超时定时器，60秒后如果连接未活动则关闭连接
+		//设置超时定时器，60秒后如果连接未活动则关闭连接
 		// timeheap->addTimer(conn_fd,std::chrono::milliseconds(60000), [this, conn_fd](int)
 		// 				   {
 		// 	std::lock_guard<std::mutex> lock(clients_mutex);
@@ -165,7 +174,6 @@ void Webserver::handleListen()
 	}
 	else
 	{
-		std::cerr << "accept error" << std::endl;
 		LOG_ERROR("accept error");
 	}
 }
@@ -186,14 +194,6 @@ void Webserver::handleRequest(int fd)
         }
         // 继续操作
     }
-
-	// timeheap->addTimer(fd, std::chrono::milliseconds(60000), [this, fd](int)
-	// 				   {
-	// 		std::lock_guard<std::mutex> lock(clients_mutex);
-	// 		if (clients.find(fd) != clients.end()) {
-	// 			LOG_INFO("Connection timeout, closing fd: %d", fd);
-	// 			closeConn(fd);
-	// 		} });
 
 	epoller->modfd(fd, EPOLLOUT | EPOLLET | EPOLLONESHOT);
 }
@@ -225,8 +225,12 @@ void Webserver::handleResponse(int fd)
 		if (it->second.isKeepAlive())
 		{
 			epoller->modfd(fd, EPOLLIN | EPOLLET | EPOLLONESHOT);  // 继续监听读事件
-
-			// timeheap->addTimer(fd, std::chrono::milliseconds(5000), [this, fd](int)
+		}
+		else
+		{
+			it->second.closeconn(); // 关闭连接
+			clients.erase(it); // 删除
+			// timeheap->addTimer(fd, std::chrono::milliseconds(1000), [this, fd](int)
 			// 				   {
 			// std::lock_guard<std::mutex> lock(clients_mutex);
 			// if (clients.find(fd) != clients.end()) {
@@ -234,28 +238,23 @@ void Webserver::handleResponse(int fd)
 			// 	closeConn(fd);
 			// } });
 		}
-		else
-		{
-			it->second.closeconn(); // 确保关闭连接
-			clients.erase(it); // 使用迭代器安全地删除
-		}
 	}
 }
 
 void Webserver::closeConn(int fd)
 {
-	if (fd < 0)
+	if (fd < 0 || fd > MAX_FD)
 	{
 		return;
 	}
 
-	std::lock_guard<std::mutex> lock(clients_mutex);
-    auto it = clients.find(fd);
+	// std::lock_guard<std::mutex> lock(clients_mutex); //加了这个锁会在handleResponse导致死锁
+	auto it = clients.find(fd);
     if (it != clients.end()) {
         LOG_INFO("Connection close, fd: %d", fd);
         it->second.closeconn(); // 确保关闭连接
 		epoller->delfd(fd);
-		timeheap->removeTimer(fd);
+		//timeheap->removeTimer(fd);
 		clients.erase(it);      // 使用迭代器安全地删除
     }
 }

@@ -19,6 +19,7 @@ public:
 	void setHeader(const std::string &key, const std::string &value);
 	void setBody(const std::string &body);
 	void setKeepAlive(bool keepAlive);
+	void reset();
 	std::string toString()const;
 
 private:

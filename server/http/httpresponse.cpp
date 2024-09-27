@@ -58,3 +58,13 @@ std::string HttpResponse::getStatusMessage()const{
 			return "Unknown";
 	}
 }
+
+void HttpResponse::reset()
+{
+	//version = "HTTP/1.1";
+	statusCode = HttpsStatus::OK;
+	body.clear();
+	headers.clear();
+	keepAlive = "close";
+	headers.clear();
+}

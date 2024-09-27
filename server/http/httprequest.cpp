@@ -77,3 +77,11 @@ bool HttpRequest::isKeepAlive() const
 	return false;
 }
 
+void HttpRequest::reset()
+{
+	method = "UNKNOWN";
+	version = "UNKNOWN";
+	path.clear();
+	headers.clear();
+	body.clear();
+}

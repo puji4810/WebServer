@@ -40,14 +40,6 @@ private:
 	bool initsocket();
 	void eventListen();
 	void eventLoop();
-	//void acceptConn();
-	//void closeConn(int fd);
-	void addClient(int fd, HttpConn &httpconn);
-	void removeClient(int fd);
-	HttpConn &getClient(int fd);
-	void addTimer(int fd, int timeout, const std::function<void(int)> &cb);
-	void removeTimer(int fd);
-	Timer& getTimer(int fd);
 	void handleListen();
 	void handleRequest(int fd);
 	void handleResponse(int fd);

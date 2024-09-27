@@ -19,6 +19,7 @@ public:
 	bool parse(const std::string &request);
 	bool parseHeadersAndBody(const std::string &request, size_t pos);
 	bool isKeepAlive() const;
+	void reset();
 	std::string getMethod() const { return method; }
 	std::string getVersion() const { return version; }
 	const std::string &getPath() const { return path; }

@@ -55,13 +55,13 @@ public:
 	std::mutex Timemutex;
 	using Clock = std::chrono::steady_clock;
 	using TimerCallback = std::function<void(int)>;
-	std::mutex timermutex;
+	//std::mutex timermutex;
 
 	TimeHeap() = default;
 
 	Timer* addTimer(int fd, std::chrono::milliseconds duration, TimerCallback cb)
 	{
-		std::lock_guard<std::mutex> lock{timermutex};
+		//std::lock_guard<std::mutex> lock{timermutex};
 		auto expireTimePoint = Clock::now() + duration;
 		Timer *timer = new Timer(fd, expireTimePoint, cb);
 		timers.push(timer);
@@ -70,7 +70,7 @@ public:
 	}
 
 	void removeTimer(int fd){
-		std::lock_guard<std::mutex> lock{timermutex};
+		//std::lock_guard<std::mutex> lock{timermutex};
 		auto target = fdMap.find(fd);
 		if(target != fdMap.end()){
 			target->second->invalidate();
@@ -79,7 +79,7 @@ public:
 	}
 
 	void tick(){
-		std::lock_guard<std::mutex> lock{timermutex};
+		//std::lock_guard<std::mutex> lock{timermutex};
 		while(!timers.empty()){
 			auto cur = Clock::now();
 			auto timer = timers.top();
@@ -93,6 +93,7 @@ public:
 			}
 			timer->runCallback();
 			timers.pop();
+			
 			delete timer;//时间到了，删除定时器
 		}
 	}
