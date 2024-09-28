@@ -84,6 +84,11 @@ ssize_t Buffer::writeFd(int fd, int *savedErrno)
 	if (n < 0)
 	{
 		*savedErrno = errno;
+		if (errno == EPIPE)
+		{
+			LOG_ERROR("BUFFER::writeFd: Broken pipe (EPIPE)");
+			return -1; // 对端已经关闭连接，返回错误
+		}
 		if (errno != EAGAIN && errno != EWOULDBLOCK)
 		{
 			LOG_ERROR("BUFFER::writeFd has error:%d", *savedErrno);

@@ -105,13 +105,13 @@ void Webserver::eventLoop()
 
 			if (fd == listen_fd)
 			{
-				//handleListen();
-				threadpool->submit(&Webserver::handleListen, this);
+				handleListen();
+				//threadpool->submit(&Webserver::handleListen, this);
 			}
 			else if (events & EPOLLIN)
 			{
 				{
-					std::lock_guard<std::mutex> lock(clients_mutex);
+					//std::lock_guard<std::mutex> lock(clients_mutex);
 					if (clients.count(fd) == 0)
 					{
 						LOG_ERROR("fd %d not found in clients", fd);
@@ -123,7 +123,7 @@ void Webserver::eventLoop()
 			else if (events & EPOLLOUT)
 			{
 				{
-					std::lock_guard<std::mutex> lock(clients_mutex);
+					//std::lock_guard<std::mutex> lock(clients_mutex);
 					if (clients.count(fd) == 0)
 					{
 						LOG_ERROR("fd %d not found in clients", fd);
@@ -181,7 +181,7 @@ void Webserver::handleListen()
 void Webserver::handleRequest(int fd)
 {
     {
-        std::lock_guard<std::mutex> lock(clients_mutex);
+        //std::lock_guard<std::mutex> lock(clients_mutex);
         auto it = clients.find(fd);
         if (it == clients.end())
         {
@@ -207,7 +207,7 @@ void Webserver::handleResponse(int fd)
 	}
 	
 	{
-		std::lock_guard<std::mutex> lock(clients_mutex); 
+		//std::lock_guard<std::mutex> lock(clients_mutex); 
 		// 写入响应数据
 		auto it = clients.find(fd);
 		if (it == clients.end())
@@ -228,6 +228,7 @@ void Webserver::handleResponse(int fd)
 		}
 		else
 		{
+			std::lock_guard<std::mutex> lock(clients_mutex);
 			it->second.closeconn(); // 关闭连接
 			clients.erase(it); // 删除
 			// timeheap->addTimer(fd, std::chrono::milliseconds(1000), [this, fd](int)

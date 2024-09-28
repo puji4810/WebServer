@@ -14,7 +14,7 @@ class Buffer
 public:
 	//Buffer() = default;
 
-	Buffer(size_t initialSize = 1024)
+	Buffer(size_t initialSize = 4096)
 		: buffer_(initialSize), readIndex_(0), writeIndex_(0) {}
 
 	// 可读取数据的长度

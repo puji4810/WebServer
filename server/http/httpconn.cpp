@@ -80,6 +80,9 @@ bool HttpConn::write()
 	ssize_t bytesWrite;
 	{
 		//std::lock_guard<std::mutex> lock{HttpConn_mutex};
+		if(sockfd<=0){
+			return false;
+		}
 		bytesWrite = writeBuffer.writeFd(sockfd, &saveErrno);
 	}
 
