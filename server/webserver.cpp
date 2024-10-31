@@ -85,6 +85,7 @@ int Webserver::setnonblocking(int fd){
 
 void Webserver::eventLoop()
 {
+	//std::mutex handle_mutex;
 	while (1)
 	{
 		int ret = epoller->wait(1000); // 等待事件发生
@@ -106,31 +107,42 @@ void Webserver::eventLoop()
 			if (fd == listen_fd)
 			{
 				handleListen();
+				//std::lock_guard<std::mutex> lock(handle_mutex);
 				//threadpool->submit(&Webserver::handleListen, this);
 			}
 			else if (events & EPOLLIN)
 			{
-				{
-					//std::lock_guard<std::mutex> lock(clients_mutex);
-					if (clients.count(fd) == 0)
-					{
-						LOG_ERROR("fd %d not found in clients", fd);
-						continue;
-					}
-				}
+				// {
+				// 	//std::lock_guard<std::mutex> lock(clients_mutex);
+				// 	if (clients.count(fd) == 0)
+				// 	{
+				// 		LOG_ERROR("fd %d not found in clients", fd);
+				// 		continue;
+				// 	}
+				// }
+				//std::lock_guard<std::mutex> lock(handle_mutex);
 				threadpool->submit(&Webserver::handleRequest, this, fd);
 			}
 			else if (events & EPOLLOUT)
 			{
-				{
-					//std::lock_guard<std::mutex> lock(clients_mutex);
-					if (clients.count(fd) == 0)
-					{
-						LOG_ERROR("fd %d not found in clients", fd);
-						continue;
-					}
-				}
+				// {
+				// 	//std::lock_guard<std::mutex> lock(clients_mutex);
+				// 	if (clients.count(fd) == 0)
+				// 	{
+				// 		LOG_ERROR("fd %d not found in clients", fd);
+				// 		continue;
+				// 	}
+				// }
+				//std::lock_guard<std::mutex> lock(handle_mutex);
 				threadpool->submit(&Webserver::handleResponse, this, fd);
+			}
+			else if (events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR))
+			{
+				closeConn(fd);
+			}
+			else
+			{
+				LOG_ERROR("Unexpected event");
 			}
 		}
 	}
@@ -180,20 +192,20 @@ void Webserver::handleListen()
 
 void Webserver::handleRequest(int fd)
 {
-    {
-        //std::lock_guard<std::mutex> lock(clients_mutex);
-        auto it = clients.find(fd);
-        if (it == clients.end())
-        {
-            return;
-        }
-        if (!it->second.read())
-        {
-            LOG_ERROR("httpconn read error, errno: %d", errno);
-            return;
-        }
-        // 继续操作
-    }
+
+	//std::lock_guard<std::mutex> lock(clients_mutex);
+	auto it = clients.find(fd);
+	if (it == clients.end())
+	{
+		return;
+	}
+	if (!it->second.read())
+	{
+		LOG_ERROR("httpconn read error, errno: %d", errno);
+		return;
+	}
+	// 继续操作
+
 
 	epoller->modfd(fd, EPOLLOUT | EPOLLET | EPOLLONESHOT);
 }
@@ -206,40 +218,38 @@ void Webserver::handleResponse(int fd)
 		return;
 	}
 	
+	// 写入响应数据
+	auto it = clients.find(fd);
+	if (it == clients.end())
 	{
-		//std::lock_guard<std::mutex> lock(clients_mutex); 
-		// 写入响应数据
-		auto it = clients.find(fd);
-		if (it == clients.end())
-		{
-			return;
-		}
-
-		if (!it->second.write())
-		{
-			LOG_ERROR("httpconn write error, errno: %d", errno);
-			return;
-		}
-
-		// 如果是长连接，继续监听读事件，否则关闭连接
-		if (it->second.isKeepAlive())
-		{
-			epoller->modfd(fd, EPOLLIN | EPOLLET | EPOLLONESHOT);  // 继续监听读事件
-		}
-		else
-		{
-			std::lock_guard<std::mutex> lock(clients_mutex);
-			it->second.closeconn(); // 关闭连接
-			clients.erase(it); // 删除
-			// timeheap->addTimer(fd, std::chrono::milliseconds(1000), [this, fd](int)
-			// 				   {
-			// std::lock_guard<std::mutex> lock(clients_mutex);
-			// if (clients.find(fd) != clients.end()) {
-			// 	LOG_INFO("Connection timeout, closing fd: %d", fd);
-			// 	closeConn(fd);
-			// } });
-		}
+		return;
 	}
+
+	if (!it->second.write())
+	{
+		LOG_ERROR("httpconn write error, errno: %d", errno);
+		return;
+	}
+
+	// 如果是长连接，继续监听读事件，否则关闭连接
+	if (it->second.isKeepAlive())
+	{
+		epoller->modfd(fd, EPOLLIN | EPOLLET | EPOLLONESHOT);  // 继续监听读事件
+	}
+	else
+	{
+		std::lock_guard<std::mutex> lock(clients_mutex);
+		it->second.closeconn(); // 关闭连接
+		clients.erase(it); // 删除
+		// timeheap->addTimer(fd, std::chrono::milliseconds(1000), [this, fd](int)
+		// 				   {
+		// std::lock_guard<std::mutex> lock(clients_mutex);
+		// if (clients.find(fd) != clients.end()) {
+		// 	LOG_INFO("Connection timeout, closing fd: %d", fd);
+		// 	closeConn(fd);
+		// } });
+	}
+
 }
 
 void Webserver::closeConn(int fd)
@@ -251,11 +261,11 @@ void Webserver::closeConn(int fd)
 
 	// std::lock_guard<std::mutex> lock(clients_mutex); //加了这个锁会在handleResponse导致死锁
 	auto it = clients.find(fd);
-    if (it != clients.end()) {
+    //if (it != clients.end()) {
         LOG_INFO("Connection close, fd: %d", fd);
         it->second.closeconn(); // 确保关闭连接
 		epoller->delfd(fd);
 		//timeheap->removeTimer(fd);
 		clients.erase(it);      // 使用迭代器安全地删除
-    }
+    //}
 }

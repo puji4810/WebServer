@@ -7,6 +7,7 @@ HttpResponse::HttpResponse()
 	keepAlive = "close";
 }
 
+
 void HttpResponse::setStatusCode(HttpsStatus status)
 {
 	statusCode = status;

@@ -15,6 +15,7 @@ private:
 
 public:
 	HttpRequest() : method("UNKNOWN"), version("UNKNOWN") {}
+	~HttpRequest() = default;
 
 	bool parse(const std::string &request);
 	bool parseHeadersAndBody(const std::string &request, size_t pos);

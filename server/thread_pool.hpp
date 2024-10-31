@@ -19,7 +19,7 @@ class ThreadPool
 {
 public:
 	using Task = std::packaged_task<void()>;
-
+	
 	ThreadPool(const ThreadPool &) = delete;
 	ThreadPool &operator=(const ThreadPool &) = delete;
 

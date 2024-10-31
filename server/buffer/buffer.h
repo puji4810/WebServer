@@ -17,6 +17,8 @@ public:
 	Buffer(size_t initialSize = 4096)
 		: buffer_(initialSize), readIndex_(0), writeIndex_(0) {}
 
+	~Buffer();
+
 	// 可读取数据的长度
 	size_t readableBytes() const { return writeIndex_ - readIndex_; }
 

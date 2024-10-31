@@ -1,5 +1,14 @@
 #include "buffer.h"
 #include "../loger/log.h"
+
+Buffer::~Buffer()
+{
+	if(!buffer_.empty()){
+		retrieveAll();
+	}
+}
+
+
 void Buffer::retrieve(size_t len)
 {
 	if (len < readableBytes())

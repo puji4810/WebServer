@@ -14,9 +14,14 @@
 
 class HttpConn{
 public:
-	std::mutex HttpConn_mutex;
+	//std::mutex HttpConn_mutex;
 
 	HttpConn();
+	// ~HttpConn() {
+	// 	closeconn();
+	// 	request.~HttpRequest();
+	// 	response.~HttpResponse();
+	// }
 	~HttpConn() = default;
 
 	void init(int fd);

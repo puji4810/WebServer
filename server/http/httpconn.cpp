@@ -39,7 +39,6 @@ bool HttpConn::read()
 
 bool HttpConn::write()
 {
-	//LOG_INFO("httpconn write");
 	Buffer filebuf;
 	std::string path = request.getPath();
 	// 如果请求的是根目录，加载 index.html
@@ -48,6 +47,7 @@ bool HttpConn::write()
 		path = "/index.html";
 	}
 	std::string filepath = "../resources" + path; // 拼接文件路径
+
 	// 如果文件存在，读取文件内容
 	if (filebuf.readFile(filepath))
 	{
@@ -85,9 +85,6 @@ bool HttpConn::write()
 		}
 		bytesWrite = writeBuffer.writeFd(sockfd, &saveErrno);
 	}
-
-	
-
 	if (bytesWrite <= 0)
 	{
 		return false; // 如果写入失败，返回 false
@@ -99,7 +96,6 @@ bool HttpConn::write()
 
 void HttpConn::closeconn()
 {
-	//std::lock_guard<std::mutex> lock{HttpConn_mutex};
 	if (isFdclosed == false)
 	{
 		close(sockfd);

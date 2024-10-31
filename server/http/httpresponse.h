@@ -14,6 +14,7 @@ public:
 	};
 
 	HttpResponse();
+	~HttpResponse()=default;
 
 	void setStatusCode(HttpsStatus status);
 	void setHeader(const std::string &key, const std::string &value);

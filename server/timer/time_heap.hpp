@@ -58,6 +58,10 @@ public:
 	//std::mutex timermutex;
 
 	TimeHeap() = default;
+	// ~TimeHeap()
+	// {
+	// 	clear();
+	// }
 
 	Timer* addTimer(int fd, std::chrono::milliseconds duration, TimerCallback cb)
 	{
@@ -116,9 +120,6 @@ public:
 		fdMap.clear();
 	}
 
-	~TimeHeap(){
-		clear();
-	}
 
 private:
 	std::priority_queue<Timer *, std::vector<Timer *>, TimerCmp> timers;
