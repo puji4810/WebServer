@@ -17,12 +17,10 @@ public:
 	//std::mutex HttpConn_mutex;
 
 	HttpConn();
-	// ~HttpConn() {
-	// 	closeconn();
-	// 	request.~HttpRequest();
-	// 	response.~HttpResponse();
-	// }
-	~HttpConn() = default;
+	~HttpConn() {
+		closeconn();
+	}
+	// ~HttpConn() = default;
 
 	void init(int fd);
 	void reset();
