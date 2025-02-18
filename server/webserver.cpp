@@ -41,10 +41,12 @@ void Webserver::start(){
 
 bool Webserver::initsocket(){
 	struct sockaddr_in addr;
+
 	if(port<1024||port>65535){
 		std::cerr<<"port error"<<std::endl;
 		exit(1);
 	}
+
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(port);
 	addr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -57,6 +59,7 @@ bool Webserver::initsocket(){
 		opt_linger.l_onoff = 1;
 		opt_linger.l_linger = 10;
 	}//优雅关闭
+
 	int ret = setsockopt(listen_fd, SOL_SOCKET, SO_LINGER, &opt_linger, sizeof(opt_linger));
 	check_ret(ret, "setsockopt error");
 
@@ -85,7 +88,7 @@ void Webserver::eventLoop()
 	//std::mutex handle_mutex;
 	while (1)
 	{
-		int ret = epoller->wait(1000); // 等待事件发生
+		int ret = epoller->wait(500); // 等待事件发生
 
 		if (ret < 0)
 		{
@@ -103,7 +106,7 @@ void Webserver::eventLoop()
 
 			if (fd == listen_fd)
 			{
-				handleListen();
+				handleConnect();
 				//std::lock_guard<std::mutex> lock(handle_mutex);
 				//threadpool->submit(&Webserver::handleListen, this);
 			}
@@ -118,7 +121,7 @@ void Webserver::eventLoop()
 				// 	}
 				// }
 				//std::lock_guard<std::mutex> lock(handle_mutex);
-				threadpool->submit(&Webserver::handleReadEvent, this, fd);
+				threadpool->submit(&Webserver::handleRequest, this, fd);
 			}
 			else if (events & EPOLLOUT)
 			{
@@ -131,7 +134,7 @@ void Webserver::eventLoop()
 				// 	}
 				// }
 				//std::lock_guard<std::mutex> lock(handle_mutex);
-				threadpool->submit(&Webserver::handleWriteEvent, this, fd);
+				threadpool->submit(&Webserver::handleResponse, this, fd);
 			}
 			else if (events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR))
 			{
@@ -145,7 +148,7 @@ void Webserver::eventLoop()
 	}
 }
 
-void Webserver::handleListen()
+void Webserver::handleConnect()
 {
 	// 监听到新的客户端连接，处理 accept
 	struct sockaddr_in addr;
@@ -187,7 +190,7 @@ void Webserver::handleListen()
 	}
 }
 
-void Webserver::handleReadEvent(int fd)
+void Webserver::handleRequest(int fd)
 {
 
 	//std::lock_guard<std::mutex> lock(clients_mutex);
@@ -196,7 +199,7 @@ void Webserver::handleReadEvent(int fd)
 	{
 		return;
 	}
-	if (!it->second.read())
+	if (!it->second.dealRequest())
 	{
 		LOG_ERROR("httpconn read error, errno: %d", errno);
 		return;
@@ -206,8 +209,7 @@ void Webserver::handleReadEvent(int fd)
 	epoller->modfd(fd, EPOLLOUT | EPOLLET | EPOLLONESHOT);
 }
 
-
-void Webserver::handleWriteEvent(int fd)
+void Webserver::handleResponse(int fd)
 {
 	if (fd < 0 || fd > MAX_FD)
 	{
@@ -221,7 +223,7 @@ void Webserver::handleWriteEvent(int fd)
 		return;
 	}
 
-	if (!it->second.write())
+	if (!it->second.dealResponse())
 	{
 		LOG_ERROR("httpconn write error, errno: %d", errno);
 		return;
@@ -256,11 +258,9 @@ void Webserver::closeConn(int fd)
 
 	// std::lock_guard<std::mutex> lock(clients_mutex); //加了这个锁会在handleResponse导致死锁
 	auto it = clients.find(fd);
-    //if (it != clients.end()) {
-        LOG_INFO("Connection close, fd: %d", fd);
-        it->second.closeconn(); // 确保关闭连接
-		epoller->delfd(fd);
-		//timeheap->removeTimer(fd);
-		clients.erase(it);      // 使用迭代器安全地删除
-    //}
+	LOG_INFO("Connection close, fd: %d", fd);
+	it->second.closeconn(); // 确保关闭连接
+	epoller->delfd(fd);
+	//timeheap->removeTimer(fd);
+	clients.erase(it);
 }

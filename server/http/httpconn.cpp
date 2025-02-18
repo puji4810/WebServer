@@ -16,7 +16,7 @@ void HttpConn::init(int fd)
 	writeBuffer.retrieveAll();
 }
 
-bool HttpConn::read()
+bool HttpConn::dealRequest()
 {
 	int saveErrno = 0;
 	ssize_t bytesRead;
@@ -37,17 +37,56 @@ bool HttpConn::read()
 	return true;
 }
 
-bool HttpConn::write()
+bool HttpConn::dealResponse()
 {
-	Buffer filebuf;
 	std::string path = request.getPath();
 	// 如果请求的是根目录，加载 index.html
 	if (path == "/")
 	{
 		path = "/index.html";
 	}
-	std::string filepath = "../resources" + path; // 拼接文件路径
+	filepath = "./resources" + path; // 拼接文件路径
 
+	if(request.getMethod() == "GET"){
+		return handleGET();
+	}
+	else if(request.getMethod() == "POST"){
+		return handlePOST();
+	}
+	else if(request.getMethod() == "PUT"){
+		return handlePUT();
+	}
+	else if(request.getMethod() == "DELETE"){
+		return handleDELETE();
+	}
+	else{
+		response.setStatusCode(HttpResponse::HttpsStatus::BAD_REQUEST);
+		return false;
+	}
+}
+
+void HttpConn::closeconn()
+{
+	if (isFdclosed == false)
+	{
+		close(sockfd);
+		isFdclosed = true;
+		sockfd = -1;
+		LOG_INFO("Connection close, sockfd: %d", sockfd);
+	}
+}
+
+void HttpConn::reset()
+{
+	request.reset();
+	response = HttpResponse();
+	readBuffer.retrieveAll();
+	writeBuffer.retrieveAll();
+	isFdclosed = false;
+}
+
+bool HttpConn::handleGET(){
+	Buffer filebuf;
 	// 如果文件存在，读取文件内容
 	if (filebuf.readFile(filepath))
 	{
@@ -79,8 +118,9 @@ bool HttpConn::write()
 	int saveErrno = 0;
 	ssize_t bytesWrite;
 	{
-		//std::lock_guard<std::mutex> lock{HttpConn_mutex};
-		if(sockfd<=0){
+		// std::lock_guard<std::mutex> lock{HttpConn_mutex};
+		if (sockfd <= 0)
+		{
 			return false;
 		}
 		bytesWrite = writeBuffer.writeFd(sockfd, &saveErrno);
@@ -89,27 +129,6 @@ bool HttpConn::write()
 	{
 		return false; // 如果写入失败，返回 false
 	}
-	
-	//LOG_INFO("httpconn write success");
+	// LOG_INFO("httpconn write success");
 	return true; // 写入成功，返回 true
-}
-
-void HttpConn::closeconn()
-{
-	if (isFdclosed == false)
-	{
-		close(sockfd);
-		isFdclosed = true;
-		sockfd = -1;
-		LOG_INFO("Connection close, sockfd: %d", sockfd);
-	}
-}
-
-void HttpConn::reset()
-{
-	request.reset();
-	response = HttpResponse();
-	readBuffer.retrieveAll();
-	writeBuffer.retrieveAll();
-	isFdclosed = false;
 }

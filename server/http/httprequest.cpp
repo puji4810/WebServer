@@ -1,7 +1,6 @@
 #include "httprequest.h"
 
 bool HttpRequest::parse(const std::string &request){
-
 	size_t pos = 0;
 	size_t line_end = request.find("\r\n", pos);
 	if (line_end == std::string::npos)
@@ -22,8 +21,7 @@ bool HttpRequest::parse(const std::string &request){
 	// 确认解析是否成功
 	if (methodStr.empty() || pathStr.empty() || versionStr.empty())
 	{
-		LOG_ERROR("Failed to parse request line, Method: [%s], Path: [%s], Version: [%s]",
-				  methodStr.c_str(), pathStr.c_str(), versionStr.c_str());
+		LOG_ERROR("Failed to parse request line, Method: [%s], Path: [%s], Version: [%s]", methodStr.c_str(), pathStr.c_str(), versionStr.c_str());
 		return false;
 	}
 

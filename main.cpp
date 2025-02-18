@@ -9,5 +9,6 @@ int main(int argc, char *argv[])
 		PORT = atoi(argv[1]);
 	}
 	Webserver webserver(PORT, true);
+	std::cout << "please visit http://127.0.0.1:" << PORT << std::endl;
 	webserver.start();
 }

@@ -23,7 +23,7 @@ void Buffer::retrieve(size_t len)
 
 std::string Buffer::retrieveAllAsString()
 {
-	std::string res(peek(), readableBytes());
+	std::string res(peek(), peek() + readableBytes());
 	retrieveAll();
 	return res;
 }
@@ -55,7 +55,7 @@ ssize_t Buffer::readFd(int fd, int *savedErrno)
 	const size_t writable = writableBytes();
 
 	// 第一块是我们缓冲区中剩余的可写空间
-	vec[0].iov_base = begin() + writeIndex_;
+	vec[0].iov_base = &*begin() + writeIndex_;
 	vec[0].iov_len = writable;
 
 	// 第二块是额外的栈缓冲区

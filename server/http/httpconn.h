@@ -24,19 +24,24 @@ public:
 
 	void init(int fd);
 	void reset();
-	bool read();
-	bool write();
+	bool dealRequest();
+	bool dealResponse();
 	void closeconn();
 	bool isKeepAlive() const { return request.isKeepAlive(); }
 	bool isClosed() const { return isFdclosed; }
 	int GetFd() const { return sockfd; }
 private:
+	bool handlePOST(){};
+	bool handleGET();
+	bool handlePUT(){};
+	bool handleDELETE(){};
 	int sockfd;
 	HttpRequest request;
 	HttpResponse response;
 	Buffer readBuffer;
 	Buffer writeBuffer;
 	bool isFdclosed = false;
+	std::string filepath;
 };
 
 #endif

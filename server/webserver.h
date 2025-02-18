@@ -40,9 +40,9 @@ private:
 	bool initsocket();
 	void eventListen();
 	void eventLoop();
-	void handleListen();
-	void handleReadEvent(int fd);
-	void handleWriteEvent(int fd);
+	void handleConnect();
+	void handleRequest(int fd);
+	void handleResponse(int fd);
 	void closeConn(int fd);
 	std::mutex clients_mutex;
 	int setnonblocking(int fd);

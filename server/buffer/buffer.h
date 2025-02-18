@@ -12,12 +12,32 @@
 class Buffer
 {
 public:
-	//Buffer() = default;
-
 	Buffer(size_t initialSize = 4096)
 		: buffer_(initialSize), readIndex_(0), writeIndex_(0) {}
-
 	~Buffer();
+
+	Buffer(const Buffer&) = delete;
+	Buffer& operator=(const Buffer&) = delete;
+	
+	Buffer(Buffer &&oth) noexcept{
+		buffer_ = std::move(oth.buffer_);
+		readIndex_ = oth.readIndex_;
+		writeIndex_ = oth.writeIndex_;
+		oth.readIndex_ = 0;
+		oth.writeIndex_ = 0;
+	}
+	
+	Buffer& operator=(Buffer &&oth) noexcept{
+		if(this != &oth){
+			buffer_ = std::move(oth.buffer_);
+			readIndex_ = oth.readIndex_;
+			writeIndex_ = oth.writeIndex_;
+			oth.readIndex_ = 0;
+			oth.writeIndex_ = 0;
+		}
+		return *this;
+	}
+
 
 	// 可读取数据的长度
 	size_t readableBytes() const { return writeIndex_ - readIndex_; }
@@ -29,7 +49,7 @@ public:
 	size_t prependableBytes() const { return readIndex_; }
 
 	// 返回可读数据的指针（不会修改缓冲区状态）
-	const char *peek() const { return begin() + readIndex_; }
+	const char* peek() const { return &*begin() + readIndex_; }
 
 	// 读取 len 个字节的数据，并更新读指针
 	void retrieve(size_t len);
@@ -62,14 +82,15 @@ public:
 	bool readFile(const std::string &filePath);
 
 	bool writeFile(const std::string &filePath);
+
 private:
 	// 返回缓冲区的起始地址
-	char *begin() { return &*buffer_.begin(); }
-	const char *begin() const { return &*buffer_.begin(); }
+	char* begin() { return buffer_.data(); }
+	const char* begin() const { return buffer_.data(); }
 
 	// 返回可写位置的指针
-	char *beginWrite() { return begin() + writeIndex_; }
-	const char *beginWrite() const { return begin() + writeIndex_; }
+	char* beginWrite() { return begin() + writeIndex_; }
+	const char* beginWrite() const { return begin() + writeIndex_; }
 
 	// 更新写指针
 	void hasWritten(size_t len) { writeIndex_ += len; }
