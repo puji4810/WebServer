@@ -1,5 +1,5 @@
 #include "httpconn.h"
-
+#include <unistd.h>
 HttpConn::HttpConn()
 {
 	sockfd = -1;

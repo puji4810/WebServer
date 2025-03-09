@@ -38,21 +38,11 @@ public:
 		return *this;
 	}
 
+	// 从套接字中读取数据到缓冲区
+	ssize_t readFd(int fd, int *savedErrno);
 
-	// 可读取数据的长度
-	size_t readableBytes() const { return writeIndex_ - readIndex_; }
-
-	// 可写入数据的长度
-	size_t writableBytes() const { return buffer_.size() - writeIndex_; }
-
-	// 缓冲区前面的空间（可以被重用的空间）
-	size_t prependableBytes() const { return readIndex_; }
-
-	// 返回可读数据的指针（不会修改缓冲区状态）
-	const char* peek() const { return &*begin() + readIndex_; }
-
-	// 读取 len 个字节的数据，并更新读指针
-	void retrieve(size_t len);
+	// 将缓冲区中的数据写入套接字
+	ssize_t writeFd(int fd, int *savedErrno);
 
 	// 清空缓冲区
 	void retrieveAll()
@@ -69,15 +59,6 @@ public:
 
 	// 添加 std::string 到缓冲区
 	void append(const std::string &str);
-
-	// 确保缓冲区有足够的可写空间
-	void ensureWritableBytes(size_t len);
-
-	// 从套接字中读取数据到缓冲区
-	ssize_t readFd(int fd, int *savedErrno);
-
-	// 将缓冲区中的数据写入套接字
-	ssize_t writeFd(int fd, int *savedErrno);
 
 	bool readFile(const std::string &filePath);
 
@@ -97,6 +78,24 @@ private:
 
 	// 扩展缓冲区
 	void makeSpace(size_t len);
+
+	// 可读取数据的长度
+	size_t readableBytes() const { return writeIndex_ - readIndex_; }
+
+	// 可写入数据的长度
+	size_t writableBytes() const { return buffer_.size() - writeIndex_; }
+
+	// 缓冲区前面的空间（可以被重用的空间）
+	size_t prependableBytes() const { return readIndex_; }
+
+	// 返回可读数据的指针（不会修改缓冲区状态）
+	const char* peek() const { return &*begin() + readIndex_; }
+
+	// 读取 len 个字节的数据，并更新读指针
+	void retrieve(size_t len);
+
+	// 确保缓冲区有足够的可写空间
+	void ensureWritableBytes(size_t len);
 
 private:
 	std::vector<char> buffer_; // 存储数据的缓冲区
