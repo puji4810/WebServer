@@ -1,11 +1,13 @@
 #include "httprequest.h"
 
 bool HttpRequest::parse(const std::string &request){
+	std::cout << "size is : " <<  request.size() << std::endl;
 	size_t pos = 0;
 	size_t line_end = request.find("\r\n", pos);
 	if (line_end == std::string::npos)
 	{
 		LOG_ERROR("Failed to find end of request line");
+	    LOG_DEBUG("Request content: [%s]", request.c_str());
 		return false;
 	}
 

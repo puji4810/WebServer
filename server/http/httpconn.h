@@ -7,8 +7,9 @@
 #include <sys/socket.h>
 #include "httprequest.h"
 #include "httpresponse.h"
-#include "../buffer/buffer.h"
+// #include "../buffer/buffer.h"
 #include <sstream>
+#include "../buffer/modern_buffer.hpp"
 #include <fstream>
 #include "../loger/log.h"
 
@@ -31,10 +32,10 @@ public:
 	bool isClosed() const { return isFdclosed; }
 	int GetFd() const { return sockfd; }
 private:
-	bool handlePOST(){};
+	bool handlePOST();
 	bool handleGET();
-	bool handlePUT(){};
-	bool handleDELETE(){};
+	bool handlePUT();
+	bool handleDELETE();
 	int sockfd;
 	HttpRequest request;
 	HttpResponse response;

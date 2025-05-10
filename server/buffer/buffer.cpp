@@ -69,7 +69,7 @@ ssize_t Buffer::readFd(int fd, int *savedErrno)
 		*savedErrno = errno;
 		if (errno != EAGAIN && errno != EWOULDBLOCK)
 		{
-			LOG_ERROR("BUFFER::readFd has error:%d", *savedErrno);
+			LOG_ERROR("Buffer::readFd has error:%d", *savedErrno);
 		}
 		return -1;
 	}
@@ -96,12 +96,12 @@ ssize_t Buffer::writeFd(int fd, int *savedErrno)
 		*savedErrno = errno;
 		if (errno == EPIPE)
 		{
-			LOG_ERROR("BUFFER::writeFd: Broken pipe (EPIPE)");
+			LOG_ERROR("Buffer::writeFd: Broken pipe (EPIPE)");
 			return -1; // 对端已经关闭连接，返回错误
 		}
 		if (errno != EAGAIN && errno != EWOULDBLOCK)
 		{
-			LOG_ERROR("BUFFER::writeFd has error:%d", *savedErrno);
+			LOG_ERROR("Buffer::writeFd has error:%d", *savedErrno);
 		}
 		return -1;
 	}

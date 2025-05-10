@@ -14,7 +14,8 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			height: 100vh;
+			min-height: 100vh;
+			padding: 20px 0;
 		}
 
 		.container {
@@ -23,10 +24,24 @@
 			padding: 30px;
 			border-radius: 10px;
 			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+			max-width: 800px;
+			width: 100%;
 		}
 
 		h1 {
 			color: #333;
+		}
+
+		h2 {
+			margin-top: 30px;
+			color: #444;
+			border-top: 1px solid #eee;
+			padding-top: 20px;
+		}
+
+		h3 {
+			color: #555;
+			margin-top: 15px;
 		}
 
 		p {
@@ -41,6 +56,66 @@
 		a:hover {
 			text-decoration: underline;
 		}
+
+		.form-container {
+			margin-top: 25px;
+			text-align: left;
+		}
+
+		.method-test {
+			margin-bottom: 25px;
+			padding: 15px;
+			background-color: #f9f9f9;
+			border-radius: 5px;
+		}
+
+		.form-group {
+			margin-bottom: 15px;
+		}
+
+		label {
+			display: block;
+			margin-bottom: 5px;
+			font-weight: bold;
+		}
+
+		input[type="text"] {
+			width: 100%;
+			padding: 8px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			box-sizing: border-box;
+		}
+
+		.btn {
+			background-color: #007BFF;
+			color: white;
+			border: none;
+			padding: 8px 15px;
+			border-radius: 4px;
+			cursor: pointer;
+			transition: background-color 0.3s;
+		}
+
+		.btn:hover {
+			background-color: #0056b3;
+		}
+
+		.response-container {
+			margin-top: 30px;
+			padding: 15px;
+			background-color: #f0f0f0;
+			border-radius: 5px;
+		}
+
+		pre {
+			background-color: #fff;
+			padding: 10px;
+			border-radius: 4px;
+			overflow-x: auto;
+			white-space: pre-wrap;
+			word-wrap: break-word;
+		}
 	</style>
 </head>
 
@@ -49,7 +124,126 @@
 		<h1>Welcome to My WebServer</h1>
 		<p>This is a simple index page served by your C++ web server!</p>
 		<p><a href="/about.html">Learn more about this server</a></p>
+		
+		<!-- 添加测试表单 -->
+		<div class="form-container">
+			<h2>测试HTTP方法</h2>
+			
+			<!-- POST 方法测试 -->
+			<div class="method-test">
+				<h3>测试 POST 方法</h3>
+				<form id="postForm" action="/test" method="post">
+					<div class="form-group">
+						<label for="postData">输入数据:</label>
+						<input type="text" id="postData" name="postData" placeholder="输入要发送的数据">
+					</div>
+					<button type="submit" class="btn">发送 POST 请求</button>
+				</form>
+			</div>
+
+			<!-- PUT 方法测试 -->
+			<div class="method-test">
+				<h3>测试 PUT 方法</h3>
+				<div class="form-group">
+					<label for="putPath">资源路径:</label>
+					<input type="text" id="putPath" value="/test" placeholder="输入资源路径">
+				</div>
+				<div class="form-group">
+					<label for="putData">输入数据:</label>
+					<input type="text" id="putData" placeholder="输入要更新的数据">
+				</div>
+				<button onclick="sendPutRequest()" class="btn">发送 PUT 请求</button>
+			</div>
+
+			<!-- DELETE 方法测试 -->
+			<div class="method-test">
+				<h3>测试 DELETE 方法</h3>
+				<div class="form-group">
+					<label for="deletePath">资源路径:</label>
+					<input type="text" id="deletePath" value="/test" placeholder="输入要删除的资源路径">
+				</div>
+				<button onclick="sendDeleteRequest()" class="btn">发送 DELETE 请求</button>
+			</div>
+			
+			<!-- 响应结果区域 -->
+			<div class="response-container">
+				<h3>响应结果</h3>
+				<pre id="responseArea">请求结果将显示在这里...</pre>
+			</div>
+		</div>
 	</div>
+	
+	<script>
+		// 发送 PUT 请求的函数
+		function sendPutRequest() {
+			const path = document.getElementById('putPath').value || '/test';
+			const data = document.getElementById('putData').value;
+			
+			fetch(path, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'text/plain'
+				},
+				body: data
+			})
+			.then(response => response.text())
+			.then(html => {
+				document.getElementById('responseArea').innerText = '请求成功，显示响应HTML太长，请查看网络请求详情';
+				// 在新窗口中打开响应内容
+				const newWindow = window.open();
+				newWindow.document.write(html);
+				newWindow.document.close();
+			})
+			.catch(error => {
+				document.getElementById('responseArea').innerText = `错误: ${error}`;
+			});
+		}
+		
+		// 发送 DELETE 请求的函数
+		function sendDeleteRequest() {
+			const path = document.getElementById('deletePath').value || '/test';
+			
+			fetch(path, {
+				method: 'DELETE'
+			})
+			.then(response => response.text())
+			.then(html => {
+				document.getElementById('responseArea').innerText = '请求成功，显示响应HTML太长，请查看网络请求详情';
+				// 在新窗口中打开响应内容
+				const newWindow = window.open();
+				newWindow.document.write(html);
+				newWindow.document.close();
+			})
+			.catch(error => {
+				document.getElementById('responseArea').innerText = `错误: ${error}`;
+			});
+		}
+		
+		// 处理 POST 表单提交
+		document.getElementById('postForm').addEventListener('submit', function(e) {
+			e.preventDefault();
+			const data = document.getElementById('postData').value;
+			
+			fetch('/test', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'text/plain'
+				},
+				body: data
+			})
+			.then(response => response.text())
+			.then(html => {
+				document.getElementById('responseArea').innerText = '请求成功，显示响应HTML太长，请查看网络请求详情';
+				// 在新窗口中打开响应内容
+				const newWindow = window.open();
+				newWindow.document.write(html);
+				newWindow.document.close();
+			})
+			.catch(error => {
+				document.getElementById('responseArea').innerText = `错误: ${error}`;
+			});
+		});
+	</script>
 </body>
 
 </html>

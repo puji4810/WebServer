@@ -9,7 +9,8 @@
 #include <assert.h>
 #include <sys/stat.h> //mkdir
 #include "blockqueue.hpp"
-#include "../buffer/buffer.h"
+// #include "../buffer/buffer.h"
+#include "../buffer/modern_buffer.hpp"
 #include <memory>
 #include <atomic>
 #include <iostream>

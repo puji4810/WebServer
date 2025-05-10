@@ -18,7 +18,7 @@ public:
 
 	Buffer(const Buffer&) = delete;
 	Buffer& operator=(const Buffer&) = delete;
-	
+
 	Buffer(Buffer &&oth) noexcept{
 		buffer_ = std::move(oth.buffer_);
 		readIndex_ = oth.readIndex_;
@@ -26,7 +26,7 @@ public:
 		oth.readIndex_ = 0;
 		oth.writeIndex_ = 0;
 	}
-	
+
 	Buffer& operator=(Buffer &&oth) noexcept{
 		if(this != &oth){
 			buffer_ = std::move(oth.buffer_);
